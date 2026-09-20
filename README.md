@@ -1,17 +1,26 @@
-# swe463_group7_project
+# QueueLess
 
-A new Flutter project.
+QueueLess is a mobile queue management application developed for SWE 463.
 
-## Getting Started
+The application allows customers to join a queue remotely, check their position and estimated waiting time, and receive notifications when their turn is near. Business owners can manage the queue and call the next customer.
 
-This project is a starting point for a Flutter application.
+## Team
 
-A few resources to get you started if this is your first Flutter project:
+- Abdulrahim Albijadi - 202260760
+- Omar Alshehri - 202177130
+- Bader Alshehri - 202178070
+- Bader Almutairi - 202159390
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+## Technology
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- Flutter
+- Dart
+- Firebase
+
+## Project Status
+
+Phase 1 - Project Proposal and Initial Setup
+
+## AI Usage
+
+AI tools may be used for learning, debugging, and small development suggestions. All submitted code will be reviewed and understood by the team.
