@@ -44,7 +44,7 @@ lib/
 ## Links
 
 - [Figma designs](https://www.figma.com/design/sVVahJW10wMCvfVPgKibRQ/QueueLess-Phase-2?node-id=0-1)
-- **GitHub:** [Repository URL](https://github.com/Abdulrahim-Albijadi/SWE463-Group7-Project/tree/main)
+- [Repository URL](https://github.com/Abdulrahim-Albijadi/SWE463-Group7-Project/tree/main)
 
 ## References and AI use
 
