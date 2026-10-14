@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'models/queue_data.dart';
+import '../models/queue_data.dart';
 import 'screens/customer_screens.dart';
 import 'screens/provider_screens.dart';
-
+    
 void main() => runApp(const QueueLessApp());
 
 class QueueLessApp extends StatefulWidget {
