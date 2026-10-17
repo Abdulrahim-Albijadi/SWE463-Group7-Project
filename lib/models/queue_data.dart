@@ -1,11 +1,16 @@
-
 import 'package:flutter/foundation.dart';
 
 enum UserRole { customer, provider }
+
 enum MembershipStatus { waiting, called, served, skipped, left }
 
 class AppUser {
-  const AppUser({required this.id, required this.name, required this.email, required this.role});
+  const AppUser({
+    required this.id,
+    required this.name,
+    required this.email,
+    required this.role,
+  });
   final String id;
   final String name;
   final String email;
@@ -71,14 +76,38 @@ class QueueDemoState extends ChangeNotifier {
   );
 
   final List<QueueEntry> entries = [
-    QueueEntry(customerId: 'c09', customerName: 'Ahmed Ali', queueId: 'campus-barber',
-        ticketNumber: 9, joinedAt: DateTime(2026, 10, 13, 10, 0), status: MembershipStatus.called),
-    QueueEntry(customerId: 'c10', customerName: 'Sara Hassan', queueId: 'campus-barber',
-        ticketNumber: 10, joinedAt: DateTime(2026, 10, 13, 10, 2), status: MembershipStatus.waiting),
-    QueueEntry(customerId: 'c11', customerName: 'Omar Khalid', queueId: 'campus-barber',
-        ticketNumber: 11, joinedAt: DateTime(2026, 10, 13, 10, 4), status: MembershipStatus.waiting),
-    QueueEntry(customerId: 'customer-1', customerName: 'Noor Abdullah', queueId: 'campus-barber',
-        ticketNumber: 12, joinedAt: DateTime(2026, 10, 13, 10, 6), status: MembershipStatus.waiting),
+    QueueEntry(
+      customerId: 'c09',
+      customerName: 'Ahmed Ali',
+      queueId: 'campus-barber',
+      ticketNumber: 9,
+      joinedAt: DateTime(2026, 10, 13, 10, 0),
+      status: MembershipStatus.called,
+    ),
+    QueueEntry(
+      customerId: 'c10',
+      customerName: 'Sara Hassan',
+      queueId: 'campus-barber',
+      ticketNumber: 10,
+      joinedAt: DateTime(2026, 10, 13, 10, 2),
+      status: MembershipStatus.waiting,
+    ),
+    QueueEntry(
+      customerId: 'c11',
+      customerName: 'Omar Khalid',
+      queueId: 'campus-barber',
+      ticketNumber: 11,
+      joinedAt: DateTime(2026, 10, 13, 10, 4),
+      status: MembershipStatus.waiting,
+    ),
+    QueueEntry(
+      customerId: 'customer-1',
+      customerName: 'Noor Abdullah',
+      queueId: 'campus-barber',
+      ticketNumber: 12,
+      joinedAt: DateTime(2026, 10, 13, 10, 6),
+      status: MembershipStatus.waiting,
+    ),
   ];
 
   final List<QueueNotification> notifications = [];
@@ -86,8 +115,14 @@ class QueueDemoState extends ChangeNotifier {
   void signInAs(UserRole role, {String? email, String? name}) {
     currentUser = AppUser(
       id: role == UserRole.customer ? 'customer-1' : 'provider-1',
-      name: name ?? (role == UserRole.customer ? 'Noor Abdullah' : 'Campus Barber Owner'),
-      email: email ?? (role == UserRole.customer ? 'customer@example.com' : 'provider@example.com'),
+      name:
+          name ??
+          (role == UserRole.customer ? 'Noor Abdullah' : 'Campus Barber Owner'),
+      email:
+          email ??
+          (role == UserRole.customer
+              ? 'customer@example.com'
+              : 'provider@example.com'),
       role: role,
     );
     notifyListeners();
@@ -99,14 +134,20 @@ class QueueDemoState extends ChangeNotifier {
   }
 
   List<QueueEntry> get activeEntries {
-    final active = entries.where((e) =>
-      e.status == MembershipStatus.called || e.status == MembershipStatus.waiting).toList();
+    final active = entries
+        .where(
+          (e) =>
+              e.status == MembershipStatus.called ||
+              e.status == MembershipStatus.waiting,
+        )
+        .toList();
     active.sort((a, b) => a.joinedAt.compareTo(b.joinedAt));
     return active;
   }
 
-  List<QueueEntry> get waitingEntries =>
-      activeEntries.where((entry) => entry.status == MembershipStatus.waiting).toList();
+  List<QueueEntry> get waitingEntries => activeEntries
+      .where((entry) => entry.status == MembershipStatus.waiting)
+      .toList();
 
   QueueEntry? get calledEntry {
     for (final entry in entries) {
@@ -132,22 +173,33 @@ class QueueDemoState extends ChangeNotifier {
   int? get customersAhead => myPosition == null ? null : myPosition! - 1;
 
   int? get estimatedWaitMinutes => queue == null || customersAhead == null
-      ? null : customersAhead! * queue!.averageServiceMinutes;
+      ? null
+      : customersAhead! * queue!.averageServiceMinutes;
 
   bool joinQueue() {
-    if (currentUser?.role != UserRole.customer || queue == null || !queue!.isOpen || myActiveEntry != null) {
+    if (currentUser?.role != UserRole.customer ||
+        queue == null ||
+        !queue!.isOpen ||
+        myActiveEntry != null) {
       return false;
     }
-    final nextTicket = entries.fold<int>(0, (value, entry) =>
-      entry.ticketNumber > value ? entry.ticketNumber : value) + 1;
-    entries.add(QueueEntry(
-      customerId: currentUser!.id,
-      customerName: currentUser!.name,
-      queueId: queue!.id,
-      ticketNumber: nextTicket,
-      joinedAt: DateTime.now(),
-      status: MembershipStatus.waiting,
-    ));
+    final nextTicket =
+        entries.fold<int>(
+          0,
+          (value, entry) =>
+              entry.ticketNumber > value ? entry.ticketNumber : value,
+        ) +
+        1;
+    entries.add(
+      QueueEntry(
+        customerId: currentUser!.id,
+        customerName: currentUser!.name,
+        queueId: queue!.id,
+        ticketNumber: nextTicket,
+        joinedAt: DateTime.now(),
+        status: MembershipStatus.waiting,
+      ),
+    );
     notifyListeners();
     return true;
   }
@@ -163,12 +215,14 @@ class QueueDemoState extends ChangeNotifier {
   bool callNext() {
     if (calledEntry != null || waitingEntries.isEmpty) return false;
     waitingEntries.first.status = MembershipStatus.called;
-    notifications.add(QueueNotification(
-      recipientId: calledEntry!.customerId,
-      type: 'called',
-      message: 'It is your turn at ${queue?.name ?? 'the queue'}.',
-      createdAt: DateTime.now(),
-    ));
+    notifications.add(
+      QueueNotification(
+        recipientId: calledEntry!.customerId,
+        type: 'called',
+        message: 'It is your turn at ${queue?.name ?? 'the queue'}.',
+        createdAt: DateTime.now(),
+      ),
+    );
     notifyListeners();
     return true;
   }
@@ -181,27 +235,45 @@ class QueueDemoState extends ChangeNotifier {
     if (called == null) return false;
     called.status = nextStatus;
     // Demo notification, not a push notification.
-    final approaching = activeEntries.where((e) => e.status == MembershipStatus.waiting).toList();
+    final approaching = activeEntries
+        .where((e) => e.status == MembershipStatus.waiting)
+        .toList();
     if (approaching.length > 2) {
       final customer = approaching[2];
-      notifications.add(QueueNotification(
-        recipientId: customer.customerId,
-        type: 'approaching',
-        message: 'Two customers are ahead of you.',
-        createdAt: DateTime.now(),
-      ));
+      notifications.add(
+        QueueNotification(
+          recipientId: customer.customerId,
+          type: 'approaching',
+          message: 'Two customers are ahead of you.',
+          createdAt: DateTime.now(),
+        ),
+      );
     }
     notifyListeners();
     return true;
   }
 
-  bool createQueue({required String name, required String description, required int minutes}) {
+  bool createQueue({
+    required String name,
+    required String description,
+    required int minutes,
+  }) {
     // One queue per provider; sample queue exists initially.
-    if (currentUser?.role != UserRole.provider || queue != null ||
-        name.trim().isEmpty || description.trim().isEmpty || minutes <= 0) return false;
-    queue = ServiceQueue(id: 'new-queue', providerId: currentUser!.id,
-      name: name.trim(), description: description.trim(),
-      averageServiceMinutes: minutes, isOpen: true);
+    if (currentUser?.role != UserRole.provider ||
+        queue != null ||
+        name.trim().isEmpty ||
+        description.trim().isEmpty ||
+        minutes <= 0) {
+      return false;
+    }
+    queue = ServiceQueue(
+      id: 'new-queue',
+      providerId: currentUser!.id,
+      name: name.trim(),
+      description: description.trim(),
+      averageServiceMinutes: minutes,
+      isOpen: true,
+    );
     notifyListeners();
     return true;
   }
