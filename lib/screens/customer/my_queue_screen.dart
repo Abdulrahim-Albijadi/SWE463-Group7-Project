@@ -4,8 +4,21 @@ import '../../models/queue_data.dart';
 import '../../widgets/customer/customer_widgets.dart';
 
 class MyQueueScreen extends StatelessWidget {
-  const MyQueueScreen({super.key, required this.state});
+  const MyQueueScreen({
+    super.key,
+    required this.state,
+    this.isLoading = false,
+    this.errorMessage,
+    this.onRetry,
+    this.isLeaving = false,
+    this.leaveErrorMessage,
+  });
   final QueueDemoState state;
+  final bool isLoading;
+  final String? errorMessage;
+  final VoidCallback? onRetry;
+  final bool isLeaving;
+  final String? leaveErrorMessage;
 
   Future<void> _leave(BuildContext context) async {
     final confirmed = await showDialog<bool>(
@@ -43,6 +56,49 @@ class MyQueueScreen extends StatelessWidget {
   Widget build(BuildContext context) => AnimatedBuilder(
     animation: state,
     builder: (context, _) {
+      if (isLoading) {
+        return CustomerPage(
+          title: 'My Queue',
+          selected: 1,
+          back: true,
+          children: const [
+            SectionTitle('Your Ticket'),
+            SizedBox(height: 24),
+            Surface(
+              child: Column(
+                children: [
+                  CircularProgressIndicator(),
+                  SizedBox(height: 16),
+                  Text('Loading your ticket...'),
+                ],
+              ),
+            ),
+          ],
+        );
+      }
+      if (errorMessage != null) {
+        return CustomerPage(
+          title: 'My Queue',
+          selected: 1,
+          back: true,
+          children: [
+            const SectionTitle('Your Ticket'),
+            const SizedBox(height: 24),
+            Surface(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const Icon(Icons.error_outline, color: customerRed, size: 32),
+                  const SizedBox(height: 12),
+                  Text(errorMessage!, textAlign: TextAlign.center),
+                  const SizedBox(height: 16),
+                  PrimaryButton(label: 'Retry', onPressed: onRetry),
+                ],
+              ),
+            ),
+          ],
+        );
+      }
       QueueEntry? latest;
       for (final entry in state.entries.reversed) {
         if (entry.customerId == state.currentUser?.id) {
@@ -223,6 +279,22 @@ class MyQueueScreen extends StatelessWidget {
                               ? const Color(0xFFEEF2F6)
                               : const Color(0xFFE0F2F1),
                         ),
+                        if (waiting &&
+                            !isLeaving &&
+                            leaveErrorMessage != null) ...[
+                          const SizedBox(height: 16),
+                          Notice(
+                            title: 'Could not leave the queue',
+                            message: leaveErrorMessage!,
+                            color: customerRed,
+                            background: const Color(0xFFFFEBEE),
+                            icon: Icons.error_outline,
+                          ),
+                        ],
+                        if (waiting && isLeaving) ...[
+                          const SizedBox(height: 16),
+                          const Center(child: CircularProgressIndicator()),
+                        ],
                         if (waiting || terminal) const SizedBox(height: 28),
                         if (waiting)
                           Align(
@@ -233,8 +305,12 @@ class MyQueueScreen extends StatelessWidget {
                                 side: const BorderSide(color: customerRed),
                                 minimumSize: const Size(110, 48),
                               ),
-                              onPressed: () => _leave(context),
-                              child: const Text('Leave Queue'),
+                              onPressed: isLeaving
+                                  ? null
+                                  : () => _leave(context),
+                              child: Text(
+                                isLeaving ? 'Leaving...' : 'Leave Queue',
+                              ),
                             ),
                           ),
                         if (terminal)
