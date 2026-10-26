@@ -4,8 +4,15 @@ import '../../models/queue_data.dart';
 import '../../widgets/customer/customer_widgets.dart';
 
 class QueueDetailsScreen extends StatelessWidget {
-  const QueueDetailsScreen({super.key, required this.state});
+  const QueueDetailsScreen({
+    super.key,
+    required this.state,
+    this.isJoining = false,
+    this.joinErrorMessage,
+  });
   final QueueDemoState state;
+  final bool isJoining;
+  final String? joinErrorMessage;
 
   void _join(BuildContext context) {
     if (state.joinQueue()) {
@@ -60,9 +67,27 @@ class QueueDetailsScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 28),
+                  if (!isJoining && joinErrorMessage != null) ...[
+                    Notice(
+                      title: 'Could not join the queue',
+                      message: joinErrorMessage!,
+                      color: Colors.red,
+                      background: const Color(0xFFFFEBEE),
+                      icon: Icons.error_outline,
+                    ),
+                    const SizedBox(height: 16),
+                  ],
+                  if (isJoining) ...[
+                    const Center(child: CircularProgressIndicator()),
+                    const SizedBox(height: 16),
+                  ],
                   PrimaryButton(
-                    label: hasTicket ? 'Cannot Join' : 'Join Queue',
-                    onPressed: hasTicket || !queue.isOpen
+                    label: isJoining
+                        ? 'Joining...'
+                        : hasTicket
+                        ? 'Cannot Join'
+                        : 'Join Queue',
+                    onPressed: isJoining || hasTicket || !queue.isOpen
                         ? null
                         : () => _join(context),
                   ),
