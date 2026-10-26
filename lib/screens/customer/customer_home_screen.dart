@@ -4,8 +4,17 @@ import '../../models/queue_data.dart';
 import '../../widgets/customer/customer_widgets.dart';
 
 class CustomerHomeScreen extends StatelessWidget {
-  const CustomerHomeScreen({super.key, required this.state});
+  const CustomerHomeScreen({
+    super.key,
+    required this.state,
+    this.isLoading = false,
+    this.errorMessage,
+    this.onRetry,
+  });
   final QueueDemoState state;
+  final bool isLoading;
+  final String? errorMessage;
+  final VoidCallback? onRetry;
 
   @override
   Widget build(BuildContext context) => AnimatedBuilder(
@@ -40,7 +49,30 @@ class CustomerHomeScreen extends StatelessWidget {
           const SizedBox(height: 32),
           const SectionTitle('Available Queues'),
           const SizedBox(height: 20),
-          if (queue == null)
+          if (isLoading)
+            const Surface(
+              child: Column(
+                children: [
+                  CircularProgressIndicator(),
+                  SizedBox(height: 16),
+                  Text('Loading queues...'),
+                ],
+              ),
+            )
+          else if (errorMessage != null)
+            Surface(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const Icon(Icons.error_outline, color: Colors.red, size: 32),
+                  const SizedBox(height: 12),
+                  Text(errorMessage!, textAlign: TextAlign.center),
+                  const SizedBox(height: 16),
+                  PrimaryButton(label: 'Retry', onPressed: onRetry),
+                ],
+              ),
+            )
+          else if (queue == null)
             const Surface(
               child: Text(
                 'No queues available right now.\nPlease check again later.',
