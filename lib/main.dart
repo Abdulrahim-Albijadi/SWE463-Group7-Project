@@ -1,10 +1,23 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'models/queue_data.dart';
 import 'screens/customer_screens.dart';
 import 'screens/provider_screens.dart';
+import 'repositories/repositories.dart';
+import 'providers/app_providers.dart';
+import 'providers/membership_provider.dart';
+import 'providers/auth_provider.dart';
 
-void main() => runApp(const QueueLessApp());
+void main() => runApp(
+  AppProviders(
+    authRepository: AuthRepository(),
+    queueRepository: QueueRepository(),
+    child: const QueueLessApp(),
+  ),
+);
 
 class QueueLessApp extends StatefulWidget {
   const QueueLessApp({super.key});
@@ -14,46 +27,80 @@ class QueueLessApp extends StatefulWidget {
 }
 
 class _QueueLessAppState extends State<QueueLessApp> {
-  final QueueDemoState state = QueueDemoState();
+  static const _customerRoutes = {'/customer', '/queue-details', '/my-queue'};
+  static const _providerRoutes = {
+    '/provider',
+    '/create-queue',
+    '/manage-queue',
+  };
+
+  final _messengerKey = GlobalKey<ScaffoldMessengerState>();
+  StreamSubscription<QueueNotification>? _alerts;
+
+  @override
+  void initState() {
+    super.initState();
+    // In-app message when the customer is near their turn or called.
+    _alerts = context.read<MembershipProvider>().alerts.listen(
+      (alert) => _messengerKey.currentState?.showSnackBar(
+        SnackBar(content: Text(alert.message)),
+      ),
+    );
+  }
 
   @override
   void dispose() {
-    state.dispose();
+    _alerts?.cancel();
     super.dispose();
   }
 
+  // Signed-out users reach only Login and Register. Each role reaches only its
+  // own screens.
+  String _allowedRoute(String? requested) {
+    final name = requested ?? '/login';
+    final user = context.read<AuthProvider>().currentUser;
+    if (user == null) return name == '/register' ? name : '/login';
+    if (_customerRoutes.contains(name) && user.role != UserRole.customer) {
+      return '/provider';
+    }
+    if (_providerRoutes.contains(name) && user.role != UserRole.provider) {
+      return '/customer';
+    }
+    return name;
+  }
+  
   Route<dynamic> _makeRoute(RouteSettings settings) {
     Widget page;
-    switch (settings.name) {
+    switch (_allowedRoute(settings.name)) {
       case '/login':
-        page = LoginScreen(state: state);
+        page =const LoginScreen();
         break;
       case '/register':
-        page = RegisterScreen(state: state);
+        page = const RegisterScreen();
         break;
       case '/customer':
-        page = CustomerHomeScreen(state: state);
+        page = const CustomerHomeScreen();
         break;
       case '/queue-details':
-        page = QueueDetailsScreen(state: state);
+        page = const QueueDetailsScreen();
         break;
       case '/my-queue':
-        page = MyQueueScreen(state: state);
+        page = const MyQueueScreen();
         break;
       case '/provider':
-        page = ProviderDashboardScreen(state: state);
+        page = const ProviderDashboardScreen();
         break;
       case '/create-queue':
-        page = CreateQueueScreen(state: state);
+        page = const CreateQueueScreen();
         break;
       case '/manage-queue':
-        page = QueueManagementScreen(state: state);
+        page = const QueueManagementScreen();
         break;
       case '/profile':
-        page = ProfileScreen(state: state);
+        page = const ProfileScreen();
         break;
       default:
-        page = LoginScreen(state: state);
+        page = const LoginScreen();
     }
     return MaterialPageRoute<void>(settings: settings, builder: (_) => page);
   }
@@ -62,6 +109,7 @@ class _QueueLessAppState extends State<QueueLessApp> {
   Widget build(BuildContext context) => MaterialApp(
     debugShowCheckedModeBanner: false,
     title: 'QueueLess',
+    scaffoldMessengerKey: _messengerKey,
     theme: ThemeData(
       useMaterial3: true,
       colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF00796B)),
@@ -87,8 +135,8 @@ class _QueueLessAppState extends State<QueueLessApp> {
 }
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key, required this.state});
-  final QueueDemoState state;
+  const LoginScreen({super.key});
+  
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -98,8 +146,15 @@ class _LoginScreenState extends State<LoginScreen> {
   final _form = GlobalKey<FormState>();
   final _email = TextEditingController(text: 'customer@example.com');
   final _password = TextEditingController(text: 'demopass');
-  UserRole role = UserRole.customer;
   bool showPassword = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) context.read<AuthProvider>().clearError();
+    });
+  }
 
   @override
   void dispose() {
@@ -108,19 +163,24 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
-  void _login() {
+  Future<void> _login() async {
     if (!_form.currentState!.validate()) return;
-    // UI demonstration ONLY. No credentials are checked or persisted.
-    widget.state.signInAs(role, email: _email.text.trim());
-    Navigator.pushNamedAndRemoveUntil(
-      context,
-      role == UserRole.customer ? '/customer' : '/provider',
+    final navigator = Navigator.of(context);
+    final outcome = await context.read<AuthProvider>().signIn(
+      email: _email.text.trim(),
+      password: _password.text,
+    );
+    if (!outcome.isOk) return;
+    navigator.pushNamedAndRemoveUntil(
+      outcome.user!.role == UserRole.customer ? '/customer' : '/provider',
       (_) => false,
     );
   }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
+  Widget build(BuildContext context) { 
+  final auth = context.watch<AuthProvider>();
+   return Scaffold(
     appBar: AppBar(title: const Text('QueueLess')),
     body: Center(
       child: ConstrainedBox(
@@ -136,7 +196,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 style: Theme.of(context).textTheme.headlineMedium,
               ),
               const SizedBox(height: 8),
-              const Text('Demo login for Customer and Provider roles'),
+              const Text('Sign in as a Customer or a Provider.'),
               const SizedBox(height: 20),
               TextFormField(
                 controller: _email,
@@ -163,33 +223,23 @@ class _LoginScreenState extends State<LoginScreen> {
                 validator: (v) =>
                     v == null || v.isEmpty ? 'Password is required' : null,
               ),
-              const SizedBox(height: 16),
-              const Text('Demo role'),
-              const SizedBox(height: 8),
-              SegmentedButton<UserRole>(
-                segments: const [
-                  ButtonSegment(
-                    value: UserRole.customer,
-                    label: Text('Customer'),
-                  ),
-                  ButtonSegment(
-                    value: UserRole.provider,
-                    label: Text('Provider'),
+              if (auth.error != null) ...[
+                  const SizedBox(height: 14),
+                  Text(
+                    auth.error!,
+                    style: TextStyle(color: Theme.of(context).colorScheme.error),
                   ),
                 ],
-                selected: {role},
-                onSelectionChanged: (selected) =>
-                    setState(() => role = selected.first),
-              ),
               const SizedBox(height: 18),
-              FilledButton(onPressed: _login, child: const Text('Sign In')),
+              FilledButton(onPressed: auth.isBusy? null :_login, child: const Text('Sign In')),
               TextButton(
                 onPressed: () => Navigator.pushNamed(context, '/register'),
                 child: const Text('Create Account'),
               ),
               const SizedBox(height: 14),
               const Text(
-                'Placeholder only. Firebase Authentication is planned for Phase 3.',
+                  'Test accounts: customer@example.com or '
+                  'provider@example.com, password demopass.',
                 textAlign: TextAlign.center,
               ),
             ],
@@ -198,12 +248,11 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     ),
   );
+  }
 }
 
 class RegisterScreen extends StatefulWidget {
-  const RegisterScreen({super.key, required this.state});
-  final QueueDemoState state;
-
+  const RegisterScreen({super.key});
   @override
   State<RegisterScreen> createState() => _RegisterScreenState();
 }
@@ -217,6 +266,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
   UserRole role = UserRole.customer;
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) context.read<AuthProvider>().clearError();
+    });
+  }
+
+  @override
   void dispose() {
     _name.dispose();
     _email.dispose();
@@ -225,23 +282,29 @@ class _RegisterScreenState extends State<RegisterScreen> {
     super.dispose();
   }
 
-  void _register() {
+  void _register() async {
     if (!_form.currentState!.validate()) return;
     // Demonstration only; passwords are NOT stored anywhere.
-    widget.state.signInAs(
-      role,
-      email: _email.text.trim(),
+    final navigator = Navigator.of(context);
+    final outcome= await context.read<AuthProvider>().register(
       name: _name.text.trim(),
+      email: _email.text.trim(),
+      password: _password.text,
+      role: role,
     );
-    Navigator.pushNamedAndRemoveUntil(
-      context,
+
+    if(!outcome.isOk) return;
+
+    navigator.pushNamedAndRemoveUntil(
       role == UserRole.customer ? '/customer' : '/provider',
       (_) => false,
     );
   }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
+  Widget build(BuildContext context){    
+    final auth = context.watch<AuthProvider>(); 
+    return Scaffold(
     appBar: AppBar(title: const Text('Register')),
     body: Form(
       key: _form,
@@ -295,90 +358,91 @@ class _RegisterScreenState extends State<RegisterScreen> {
             onSelectionChanged: (selection) =>
                 setState(() => role = selection.first),
           ),
+          if(auth.error !=null) ...[
+            const SizedBox(height: 14),
+            Text(
+              auth.error!,
+              style: TextStyle(color: Theme.of(context).colorScheme.error),
+            ),
+          ],
           const SizedBox(height: 20),
           FilledButton(
-            onPressed: _register,
-            child: const Text('Create Account'),
-          ),
-          const SizedBox(height: 12),
-          const Text(
-            'Demo only. Real registration will use Firebase Authentication.',
+            onPressed: auth.isBusy ? null : _register,
+            child: Text(auth.isBusy ? 'Creating...' : 'Create Account'),
           ),
         ],
       ),
     ),
-  );
+  );}
 }
 
 class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({super.key, required this.state});
-  final QueueDemoState state;
+  const ProfileScreen({super.key});
+
+
+  Future<void> _logout(BuildContext context) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Log out?'),
+        content: const Text('Return to the sign-in screen?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(dialogContext, true),
+            child: const Text('Log Out'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !context.mounted) return;
+    final navigator = Navigator.of(context);
+    await context.read<AuthProvider>().signOut();
+    navigator.pushNamedAndRemoveUntil('/login', (_) => false);
+  }
+
+  
 
   @override
-  Widget build(BuildContext context) => AnimatedBuilder(
-    animation: state,
-    builder: (context, _) {
-      final user = state.currentUser;
-      return Scaffold(
-        appBar: AppBar(title: const Text('Profile')),
-        body: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(18),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Icon(Icons.account_circle, size: 52),
-                      const SizedBox(height: 10),
-                      Text(
-                        user?.name ?? 'Not signed in',
-                        style: Theme.of(context).textTheme.titleLarge,
-                      ),
-                      Text(user?.email ?? 'No email'),
-                      Text('Role: ${user?.role.name ?? 'None'}'),
-                    ],
-                  ),
+  Widget build(BuildContext context) { 
+    final user = context.watch<AuthProvider>().currentUser;
+     return Scaffold(
+      appBar: AppBar(title: const Text('Profile')),
+      body: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(18),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Icon(Icons.account_circle, size: 52),
+                    const SizedBox(height: 10),
+                    Text(
+                      user?.name ?? 'Not signed in',
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                    Text(user?.email ?? 'No email'),
+                    Text('Role: ${user?.role.name ?? 'None'}'),
+                  ],
                 ),
               ),
-              const SizedBox(height: 18),
-              FilledButton.tonalIcon(
-                icon: const Icon(Icons.logout),
-                label: const Text('Logout'),
-                onPressed: () async {
-                  final confirmed = await showDialog<bool>(
-                    context: context,
-                    builder: (dialogContext) => AlertDialog(
-                      title: const Text('Log out?'),
-                      content: const Text('Return to the sign-in screen?'),
-                      actions: [
-                        TextButton(
-                          onPressed: () => Navigator.pop(dialogContext, false),
-                          child: const Text('Cancel'),
-                        ),
-                        FilledButton(
-                          onPressed: () => Navigator.pop(dialogContext, true),
-                          child: const Text('Log Out'),
-                        ),
-                      ],
-                    ),
-                  );
-                  if (confirmed != true || !context.mounted) return;
-                  state.logout();
-                  Navigator.pushNamedAndRemoveUntil(
-                    context,
-                    '/login',
-                    (_) => false,
-                  );
-                },
-              ),
-            ],
-          ),
+            ),
+            const SizedBox(height: 18),
+            FilledButton.tonalIcon(
+              icon: const Icon(Icons.logout),
+              label: const Text('Logout'),
+              onPressed: () => _logout(context),
+            ),
+          ],
         ),
-      );
-    },
-  );
+      ),
+    );
+    }
 }

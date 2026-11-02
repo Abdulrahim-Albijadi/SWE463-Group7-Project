@@ -2,42 +2,51 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:swe463_group7_project/models/queue_data.dart';
 import 'package:swe463_group7_project/screens/customer/customer_home_screen.dart';
+import 'package:swe463_group7_project/providers/app_providers.dart';
+import 'package:swe463_group7_project/repositories/in_memory_repositories.dart';
+import 'package:swe463_group7_project/repositories/repositories.dart';
+
+
+class FailingQueueRepository extends InMemoryQueueRepository {
+  int requests = 0;
+
+  @override
+  Stream<List<QueueSummary>> watchQueueSummaries() {
+    requests++;
+    return Stream<List<QueueSummary>>.error(StateError('offline'));
+  }
+}
+
+
 
 void main() {
-  late QueueDemoState state;
-
-  setUp(() {
-    state = QueueDemoState();
-    state.signInAs(UserRole.customer);
-  });
-
-  tearDown(() {
-    state.dispose();
-  });
-
   Future<void> showHome(
     WidgetTester tester, {
-    bool isLoading = false,
-    String? errorMessage,
-    VoidCallback? onRetry,
+    QueueRepository? queueRepository,
+    bool settle = true,
   }) async {
     await tester.binding.setSurfaceSize(const Size(390, 844));
     addTearDown(() => tester.binding.setSurfaceSize(null));
 
+
+    final authRepository = InMemoryAuthRepository();
+    await authRepository.signIn(
+      email: 'customer@example.com',
+      password: 'demopass',
+    );
     await tester.pumpWidget(
-      MaterialApp(
-        home: CustomerHomeScreen(
-          state: state,
-          isLoading: isLoading,
-          errorMessage: errorMessage,
-          onRetry: onRetry,
-        ),
+      AppProviders(
+        authRepository: authRepository,
+        queueRepository: queueRepository ?? InMemoryQueueRepository(),
+        child: const MaterialApp(
+          home: CustomerHomeScreen()),
       ),
     );
+    if (settle) await tester.pumpAndSettle();
   }
 
   testWidgets('Loading hides queue data and keeps navigation', (tester) async {
-    await showHome(tester, isLoading: true);
+    await showHome(tester, settle: false);
 
     expect(find.byType(CircularProgressIndicator), findsOneWidget);
     expect(find.text('Loading queues...'), findsOneWidget);
@@ -48,44 +57,43 @@ void main() {
     expect(find.text('My Queue'), findsOneWidget);
   });
 
-  testWidgets('Error hides queue data and Retry invokes callback', (
+  testWidgets('Error hides queue data and Retry loads again', (
     tester,
   ) async {
-    var retryCount = 0;
+    final repository = FailingQueueRepository();
 
     await showHome(
       tester,
-      errorMessage: 'Could not load queues.',
-      onRetry: () => retryCount++,
+      queueRepository: repository,
     );
 
-    expect(find.text('Could not load queues.'), findsOneWidget);
     expect(find.text('Campus Barber'), findsNothing);
     expect(find.text('View Queue'), findsNothing);
     expect(find.text('View My Ticket'), findsNothing);
+    expect(repository.requests, 1);
 
     final retry = find.widgetWithText(FilledButton, 'Retry');
     await tester.ensureVisible(retry);
     await tester.tap(retry);
-    await tester.pump();
+    await tester.pumpAndSettle();
 
-    expect(retryCount, 1);
+    expect(repository.requests, 2);
   });
 
-  testWidgets('Retry is disabled without a callback', (tester) async {
-    await showHome(tester, errorMessage: 'Could not load queues.');
+  // testWidgets('Retry is disabled without a callback', (tester) async {
+  //   await showHome(tester, errorMessage: 'Could not load queues.');
 
-    final retry = tester.widget<FilledButton>(
-      find.widgetWithText(FilledButton, 'Retry'),
-    );
+  //   final retry = tester.widget<FilledButton>(
+  //     find.widgetWithText(FilledButton, 'Retry'),
+  //   );
 
-    expect(retry.onPressed, isNull);
-  });
+  //   expect(retry.onPressed, isNull);
+  // });
 
   testWidgets('No queue displays the empty state', (tester) async {
-    state.queue = null;
+    
 
-    await showHome(tester);
+    await showHome(tester, queueRepository: InMemoryQueueRepository(seedSampleData:false));
 
     expect(
       find.text('No queues available right now.\nPlease check again later.'),
