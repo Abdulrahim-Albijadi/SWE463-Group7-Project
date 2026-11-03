@@ -8,12 +8,12 @@ import 'package:provider/provider.dart';
 import 'models/queue_data.dart';
 import 'screens/customer_screens.dart';
 import 'screens/provider_screens.dart';
-import 'repositories/repositories.dart';
 import 'providers/app_providers.dart';
 import 'providers/membership_provider.dart';
 import 'providers/auth_provider.dart';
 import 'firebase_options.dart';
 import 'repositories/firebase_auth_repository.dart';
+import 'repositories/firebase_queue_repository.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,7 +25,7 @@ Future<void> main() async {
   runApp(
     AppProviders(
       authRepository: FirebaseAuthRepository(),
-      queueRepository: QueueRepository(),
+      queueRepository: FirebaseQueueRepository(),
       child: const QueueLessApp(),
     ),
   );
