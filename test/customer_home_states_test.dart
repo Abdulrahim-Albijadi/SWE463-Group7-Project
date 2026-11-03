@@ -3,11 +3,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:swe463_group7_project/models/queue_data.dart';
 import 'package:swe463_group7_project/screens/customer/customer_home_screen.dart';
 import 'package:swe463_group7_project/providers/app_providers.dart';
-import 'package:swe463_group7_project/repositories/in_memory_repositories.dart';
 import 'package:swe463_group7_project/repositories/repositories.dart';
 
-
-class FailingQueueRepository extends InMemoryQueueRepository {
+class FailingQueueRepository extends QueueRepository {
   int requests = 0;
 
   @override
@@ -16,8 +14,6 @@ class FailingQueueRepository extends InMemoryQueueRepository {
     return Stream<List<QueueSummary>>.error(StateError('offline'));
   }
 }
-
-
 
 void main() {
   Future<void> showHome(
@@ -28,8 +24,7 @@ void main() {
     await tester.binding.setSurfaceSize(const Size(390, 844));
     addTearDown(() => tester.binding.setSurfaceSize(null));
 
-
-    final authRepository = InMemoryAuthRepository();
+    final authRepository = AuthRepository();
     await authRepository.signIn(
       email: 'customer@example.com',
       password: 'demopass',
@@ -37,9 +32,8 @@ void main() {
     await tester.pumpWidget(
       AppProviders(
         authRepository: authRepository,
-        queueRepository: queueRepository ?? InMemoryQueueRepository(),
-        child: const MaterialApp(
-          home: CustomerHomeScreen()),
+        queueRepository: queueRepository ?? QueueRepository(),
+        child: const MaterialApp(home: CustomerHomeScreen()),
       ),
     );
     if (settle) await tester.pumpAndSettle();
@@ -57,15 +51,10 @@ void main() {
     expect(find.text('My Queue'), findsOneWidget);
   });
 
-  testWidgets('Error hides queue data and Retry loads again', (
-    tester,
-  ) async {
+  testWidgets('Error hides queue data and Retry loads again', (tester) async {
     final repository = FailingQueueRepository();
 
-    await showHome(
-      tester,
-      queueRepository: repository,
-    );
+    await showHome(tester, queueRepository: repository);
 
     expect(find.text('Campus Barber'), findsNothing);
     expect(find.text('View Queue'), findsNothing);
@@ -91,9 +80,10 @@ void main() {
   // });
 
   testWidgets('No queue displays the empty state', (tester) async {
-    
-
-    await showHome(tester, queueRepository: InMemoryQueueRepository(seedSampleData:false));
+    await showHome(
+      tester,
+      queueRepository: QueueRepository(seedSampleData: false),
+    );
 
     expect(
       find.text('No queues available right now.\nPlease check again later.'),
