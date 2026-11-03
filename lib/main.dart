@@ -1,23 +1,35 @@
+
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
 
 import 'models/queue_data.dart';
 import 'screens/customer_screens.dart';
 import 'screens/provider_screens.dart';
-import 'repositories/repositories.dart';
 import 'providers/app_providers.dart';
 import 'providers/membership_provider.dart';
 import 'providers/auth_provider.dart';
+import 'firebase_options.dart';
+import 'repositories/firebase_auth_repository.dart';
+import 'repositories/firebase_queue_repository.dart';
 
-void main() => runApp(
-  AppProviders(
-    authRepository: AuthRepository(),
-    queueRepository: QueueRepository(),
-    child: const QueueLessApp(),
-  ),
-);
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
+  runApp(
+    AppProviders(
+      authRepository: FirebaseAuthRepository(),
+      queueRepository: FirebaseQueueRepository(),
+      child: const QueueLessApp(),
+    ),
+  );
+}
 
 class QueueLessApp extends StatefulWidget {
   const QueueLessApp({super.key});
@@ -68,12 +80,12 @@ class _QueueLessAppState extends State<QueueLessApp> {
     }
     return name;
   }
-  
+
   Route<dynamic> _makeRoute(RouteSettings settings) {
     Widget page;
     switch (_allowedRoute(settings.name)) {
       case '/login':
-        page =const LoginScreen();
+        page = const LoginScreen();
         break;
       case '/register':
         page = const RegisterScreen();
@@ -136,7 +148,6 @@ class _QueueLessAppState extends State<QueueLessApp> {
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
-  
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -178,81 +189,85 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   @override
-  Widget build(BuildContext context) { 
-  final auth = context.watch<AuthProvider>();
-   return Scaffold(
-    appBar: AppBar(title: const Text('QueueLess')),
-    body: Center(
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 460),
-        child: Form(
-          key: _form,
-          child: ListView(
-            shrinkWrap: true,
-            padding: const EdgeInsets.all(24),
-            children: [
-              Text(
-                'Sign In',
-                style: Theme.of(context).textTheme.headlineMedium,
-              ),
-              const SizedBox(height: 8),
-              const Text('Sign in as a Customer or a Provider.'),
-              const SizedBox(height: 20),
-              TextFormField(
-                controller: _email,
-                keyboardType: TextInputType.emailAddress,
-                decoration: const InputDecoration(labelText: 'Email'),
-                validator: (v) => v == null || !v.contains('@')
-                    ? 'Enter a valid email'
-                    : null,
-              ),
-              const SizedBox(height: 14),
-              TextFormField(
-                controller: _password,
-                obscureText: !showPassword,
-                decoration: InputDecoration(
-                  labelText: 'Password',
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      showPassword ? Icons.visibility_off : Icons.visibility,
-                    ),
-                    onPressed: () =>
-                        setState(() => showPassword = !showPassword),
-                  ),
+  Widget build(BuildContext context) {
+    final auth = context.watch<AuthProvider>();
+    return Scaffold(
+      appBar: AppBar(title: const Text('QueueLess')),
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 460),
+          child: Form(
+            key: _form,
+            child: ListView(
+              shrinkWrap: true,
+              padding: const EdgeInsets.all(24),
+              children: [
+                Text(
+                  'Sign In',
+                  style: Theme.of(context).textTheme.headlineMedium,
                 ),
-                validator: (v) =>
-                    v == null || v.isEmpty ? 'Password is required' : null,
-              ),
-              if (auth.error != null) ...[
+                const SizedBox(height: 8),
+                const Text('Sign in as a Customer or a Provider.'),
+                const SizedBox(height: 20),
+                TextFormField(
+                  controller: _email,
+                  keyboardType: TextInputType.emailAddress,
+                  decoration: const InputDecoration(labelText: 'Email'),
+                  validator: (v) => v == null || !v.contains('@')
+                      ? 'Enter a valid email'
+                      : null,
+                ),
+                const SizedBox(height: 14),
+                TextFormField(
+                  controller: _password,
+                  obscureText: !showPassword,
+                  decoration: InputDecoration(
+                    labelText: 'Password',
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        showPassword ? Icons.visibility_off : Icons.visibility,
+                      ),
+                      onPressed: () =>
+                          setState(() => showPassword = !showPassword),
+                    ),
+                  ),
+                  validator: (v) =>
+                      v == null || v.isEmpty ? 'Password is required' : null,
+                ),
+                if (auth.error != null) ...[
                   const SizedBox(height: 14),
                   Text(
                     auth.error!,
                     style: TextStyle(color: Theme.of(context).colorScheme.error),
                   ),
                 ],
-              const SizedBox(height: 18),
-              FilledButton(onPressed: auth.isBusy? null :_login, child: const Text('Sign In')),
-              TextButton(
-                onPressed: () => Navigator.pushNamed(context, '/register'),
-                child: const Text('Create Account'),
-              ),
-              const SizedBox(height: 14),
-              const Text(
+                const SizedBox(height: 18),
+                FilledButton(
+                  onPressed: auth.isBusy ? null : _login,
+                  child: const Text('Sign In'),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.pushNamed(context, '/register'),
+                  child: const Text('Create Account'),
+                ),
+                const SizedBox(height: 14),
+                const Text(
                   'Test accounts: customer@example.com or '
                   'provider@example.com, password demopass.',
-                textAlign: TextAlign.center,
-              ),
-            ],
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
           ),
         ),
       ),
-    ),
-  );
+    );
   }
 }
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
+
   @override
   State<RegisterScreen> createState() => _RegisterScreenState();
 }
@@ -286,14 +301,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
     if (!_form.currentState!.validate()) return;
     // Demonstration only; passwords are NOT stored anywhere.
     final navigator = Navigator.of(context);
-    final outcome= await context.read<AuthProvider>().register(
+    final outcome = await context.read<AuthProvider>().register(
       name: _name.text.trim(),
       email: _email.text.trim(),
       password: _password.text,
       role: role,
     );
 
-    if(!outcome.isOk) return;
+    if (!outcome.isOk) return;
 
     navigator.pushNamedAndRemoveUntil(
       role == UserRole.customer ? '/customer' : '/provider',
@@ -302,83 +317,83 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   @override
-  Widget build(BuildContext context){    
-    final auth = context.watch<AuthProvider>(); 
+  Widget build(BuildContext context) {
+    final auth = context.watch<AuthProvider>();
     return Scaffold(
-    appBar: AppBar(title: const Text('Register')),
-    body: Form(
-      key: _form,
-      child: ListView(
-        padding: const EdgeInsets.all(20),
-        children: [
-          Text(
-            'Create an Account',
-            style: Theme.of(context).textTheme.headlineMedium,
-          ),
-          const SizedBox(height: 16),
-          TextFormField(
-            controller: _name,
-            decoration: const InputDecoration(labelText: 'Full name'),
-            validator: (v) =>
-                v == null || v.trim().isEmpty ? 'Name is required' : null,
-          ),
-          const SizedBox(height: 12),
-          TextFormField(
-            controller: _email,
-            keyboardType: TextInputType.emailAddress,
-            decoration: const InputDecoration(labelText: 'Email'),
-            validator: (v) =>
-                v == null || !v.contains('@') ? 'Enter a valid email' : null,
-          ),
-          const SizedBox(height: 12),
-          TextFormField(
-            controller: _password,
-            obscureText: true,
-            decoration: const InputDecoration(labelText: 'Password'),
-            validator: (v) =>
-                v == null || v.length < 6 ? 'Use at least 6 characters' : null,
-          ),
-          const SizedBox(height: 12),
-          TextFormField(
-            controller: _confirm,
-            obscureText: true,
-            decoration: const InputDecoration(labelText: 'Confirm password'),
-            validator: (v) =>
-                v != _password.text ? 'Passwords do not match' : null,
-          ),
-          const SizedBox(height: 16),
-          const Text('Register as'),
-          const SizedBox(height: 8),
-          SegmentedButton<UserRole>(
-            segments: const [
-              ButtonSegment(value: UserRole.customer, label: Text('Customer')),
-              ButtonSegment(value: UserRole.provider, label: Text('Provider')),
-            ],
-            selected: {role},
-            onSelectionChanged: (selection) =>
-                setState(() => role = selection.first),
-          ),
-          if(auth.error !=null) ...[
-            const SizedBox(height: 14),
+      appBar: AppBar(title: const Text('Register')),
+      body: Form(
+        key: _form,
+        child: ListView(
+          padding: const EdgeInsets.all(20),
+          children: [
             Text(
-              auth.error!,
-              style: TextStyle(color: Theme.of(context).colorScheme.error),
+              'Create an Account',
+              style: Theme.of(context).textTheme.headlineMedium,
+            ),
+            const SizedBox(height: 16),
+            TextFormField(
+              controller: _name,
+              decoration: const InputDecoration(labelText: 'Full name'),
+              validator: (v) =>
+                  v == null || v.trim().isEmpty ? 'Name is required' : null,
+            ),
+            const SizedBox(height: 12),
+            TextFormField(
+              controller: _email,
+              keyboardType: TextInputType.emailAddress,
+              decoration: const InputDecoration(labelText: 'Email'),
+              validator: (v) =>
+                  v == null || !v.contains('@') ? 'Enter a valid email' : null,
+            ),
+            const SizedBox(height: 12),
+            TextFormField(
+              controller: _password,
+              obscureText: true,
+              decoration: const InputDecoration(labelText: 'Password'),
+              validator: (v) =>
+                  v == null || v.length < 6 ? 'Use at least 6 characters' : null,
+            ),
+            const SizedBox(height: 12),
+            TextFormField(
+              controller: _confirm,
+              obscureText: true,
+              decoration: const InputDecoration(labelText: 'Confirm password'),
+              validator: (v) =>
+                  v != _password.text ? 'Passwords do not match' : null,
+            ),
+            const SizedBox(height: 16),
+            const Text('Register as'),
+            const SizedBox(height: 8),
+            SegmentedButton<UserRole>(
+              segments: const [
+                ButtonSegment(value: UserRole.customer, label: Text('Customer')),
+                ButtonSegment(value: UserRole.provider, label: Text('Provider')),
+              ],
+              selected: {role},
+              onSelectionChanged: (selection) =>
+                  setState(() => role = selection.first),
+            ),
+            if (auth.error != null) ...[
+              const SizedBox(height: 14),
+              Text(
+                auth.error!,
+                style: TextStyle(color: Theme.of(context).colorScheme.error),
+              ),
+            ],
+            const SizedBox(height: 20),
+            FilledButton(
+              onPressed: auth.isBusy ? null : _register,
+              child: Text(auth.isBusy ? 'Creating...' : 'Create Account'),
             ),
           ],
-          const SizedBox(height: 20),
-          FilledButton(
-            onPressed: auth.isBusy ? null : _register,
-            child: Text(auth.isBusy ? 'Creating...' : 'Create Account'),
-          ),
-        ],
+        ),
       ),
-    ),
-  );}
+    );
+  }
 }
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
-
 
   Future<void> _logout(BuildContext context) async {
     final confirmed = await showDialog<bool>(
@@ -404,12 +419,10 @@ class ProfileScreen extends StatelessWidget {
     navigator.pushNamedAndRemoveUntil('/login', (_) => false);
   }
 
-  
-
   @override
-  Widget build(BuildContext context) { 
+  Widget build(BuildContext context) {
     final user = context.watch<AuthProvider>().currentUser;
-     return Scaffold(
+    return Scaffold(
       appBar: AppBar(title: const Text('Profile')),
       body: Padding(
         padding: const EdgeInsets.all(20),
@@ -444,5 +457,5 @@ class ProfileScreen extends StatelessWidget {
         ),
       ),
     );
-    }
+  }
 }
