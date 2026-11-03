@@ -1,0 +1,90 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+    function currentProfile() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+    function isCustomer() {
+      return signedIn() && currentProfile().role == 'customer';
+    }
+    function isProvider() {
+      return signedIn() && currentProfile().role == 'provider';
+    }
+
+    match /users/{userId} {
+      allow get: if signedIn() && request.auth.uid == userId;
+      allow create: if signedIn()
+        && request.auth.uid == userId
+        && request.resource.data.keys().hasAll(['name', 'email', 'role'])
+        && request.resource.data.keys().hasOnly(['name', 'email', 'role'])
+        && request.resource.data.name is string
+        && request.resource.data.email == request.auth.token.email
+        && request.resource.data.role in ['customer', 'provider'];
+      allow list, update, delete: if false;
+    }
+
+    match /queues/{queueId} {
+      allow read: if signedIn();
+      allow create: if isProvider()
+        && queueId == request.auth.uid
+        && request.resource.data.keys().hasAll([
+          'providerId', 'name', 'description', 'averageServiceMinutes', 'isOpen'
+        ])
+        && request.resource.data.keys().hasOnly([
+          'providerId', 'name', 'description', 'averageServiceMinutes', 'isOpen'
+        ])
+        && request.resource.data.providerId == request.auth.uid
+        && request.resource.data.name is string
+        && request.resource.data.name.size() > 0
+        && request.resource.data.description is string
+        && request.resource.data.averageServiceMinutes is int
+        && request.resource.data.averageServiceMinutes > 0
+        && request.resource.data.isOpen == true;
+      allow update, delete: if false;
+    }
+
+    match /entries/{entryId} {
+      // Phase 3: queue members' names and ticket statuses are visible to all
+      // signed-in users. Do not store private information in these documents.
+      allow read: if signedIn();
+      allow create: if isCustomer()
+        && request.resource.data.keys().hasAll([
+          'customerId', 'customerName', 'queueId', 'ticketNumber',
+          'joinedAt', 'status'
+        ])
+        && request.resource.data.keys().hasOnly([
+          'customerId', 'customerName', 'queueId', 'ticketNumber',
+          'joinedAt', 'status'
+        ])
+        && request.resource.data.customerId == request.auth.uid
+        && request.resource.data.customerName == currentProfile().name
+        && request.resource.data.queueId is string
+        && exists(/databases/$(database)/documents/queues/$(request.resource.data.queueId))
+        && get(/databases/$(database)/documents/queues/$(request.resource.data.queueId)).data.isOpen == true
+        && request.resource.data.ticketNumber is int
+        && request.resource.data.ticketNumber > 0
+        && request.resource.data.joinedAt is timestamp
+        && request.resource.data.status == 'waiting';
+
+      allow update: if signedIn()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status'])
+        && (
+          (resource.data.customerId == request.auth.uid
+            && resource.data.status == 'waiting'
+            && request.resource.data.status == 'left')
+          ||
+          (get(/databases/$(database)/documents/queues/$(resource.data.queueId)).data.providerId == request.auth.uid
+            && (
+              (resource.data.status == 'waiting' && request.resource.data.status == 'called')
+              ||
+              (resource.data.status == 'called'
+                && request.resource.data.status in ['served', 'skipped'])
+            ))
+        );
+      allow delete: if false;
+    }
+  }
+}
