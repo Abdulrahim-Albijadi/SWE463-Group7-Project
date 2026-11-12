@@ -1,0 +1,15 @@
+{
+  "kind": "LIVE CHROME STARTUP WITH EXISTING FIREBASE CONFIGURATION",
+  "initializationEvidence": "The original main() awaits Firebase.initializeApp before runApp; the actual app reached its login form. A separate live sign-in probe received an actual Firebase Authentication response.",
+  "successfulAuthenticationVerified": false,
+  "firestoreWritesPerformed": false,
+  "state": {
+    "title": "QueueLess",
+    "route": "#/login",
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "visibleText": "Back\nQueueLess\nSign In\nSign in as a Customer or a Provider.\nSign In\nCreate Account\nTest accounts: customer@example.com or provider@example.com, password demopass."
+  }
+}

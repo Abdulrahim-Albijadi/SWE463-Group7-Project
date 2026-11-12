@@ -1,0 +1,63 @@
+{
+  "source": "Actual Flutter application in Chrome; existing Firebase configuration; newly generated isolated Provider identity",
+  "account": {
+    "name": "Omar Phase3 Provider Test",
+    "email": "queueless.phase3.omar.provider.889fd60618e@example.com"
+  },
+  "submittedToFirebase": true,
+  "network": [
+    {
+      "host": "identitytoolkit.googleapis.com",
+      "path": "/v1/accounts:signUp",
+      "httpStatus": 200,
+      "outcome": {
+        "uid": "dbIZuVG1rDTe3sGaUCHSwaUzmnz2",
+        "email": "queueless.phase3.omar.provider.889fd60618e@example.com"
+      }
+    },
+    {
+      "host": "identitytoolkit.googleapis.com",
+      "path": "/v1/accounts:lookup",
+      "httpStatus": 200,
+      "outcome": {
+        "uid": null,
+        "email": null
+      }
+    },
+    {
+      "host": "firestore.googleapis.com",
+      "path": "/google.firestore.v1.Firestore/Write/channel",
+      "httpStatus": 200
+    },
+    {
+      "host": "firestore.googleapis.com",
+      "path": "/google.firestore.v1.Firestore/Listen/channel",
+      "httpStatus": 200
+    },
+    {
+      "host": "firestore.googleapis.com",
+      "path": "/google.firestore.v1.Firestore/Listen/channel",
+      "httpStatus": 200
+    },
+    {
+      "host": "firestore.googleapis.com",
+      "path": "/google.firestore.v1.Firestore/Listen/channel",
+      "httpStatus": 200
+    },
+    {
+      "host": "firestore.googleapis.com",
+      "path": "/google.firestore.v1.Firestore/Write/channel",
+      "httpStatus": 200
+    },
+    {
+      "host": "firestore.googleapis.com",
+      "path": "/google.firestore.v1.Firestore/Write/channel",
+      "httpStatus": 200
+    }
+  ],
+  "runtimeErrors": [],
+  "route": "#/provider",
+  "visibleText": "QueueLess\nProfile O\nProvider Dashboard\nCreate Queue",
+  "registrationPassed": true,
+  "note": "No existing user record selected or modified. Passwords/tokens excluded from evidence."
+}

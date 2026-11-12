@@ -1,0 +1,22 @@
+{
+  "source": "Live Flutter UI registration; existing Firebase configuration",
+  "step": "Customer registration",
+  "passed": true,
+  "account": {
+    "name": "Omar Phase3 Customer Test",
+    "email": "queueless.phase3.omar.customer.889fd60618e@example.com"
+  },
+  "responses": [
+    {
+      "path": "/v1/accounts:signUp",
+      "httpStatus": 200,
+      "uid": "jp4riCa9PzQpMrb238NE2jozSox1"
+    },
+    {
+      "path": "/v1/accounts:lookup",
+      "httpStatus": 200,
+      "uid": null
+    }
+  ],
+  "visibleText": ""
+}

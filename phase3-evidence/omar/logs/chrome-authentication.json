@@ -1,0 +1,25 @@
+{
+  "kind": "LIVE FIREBASE AUTHENTICATION FAILURE PROBE",
+  "identity": "Nonexistent reserved-domain email; no registration or Firestore writes",
+  "responseReceived": true,
+  "requests": [
+    {
+      "host": "identitytoolkit.googleapis.com",
+      "path": "/v1/accounts:signInWithPassword",
+      "status": 400,
+      "error": {
+        "code": 400,
+        "message": "INVALID_LOGIN_CREDENTIALS",
+        "errors": [
+          {
+            "message": "INVALID_LOGIN_CREDENTIALS",
+            "domain": "global",
+            "reason": "invalid"
+          }
+        ]
+      }
+    }
+  ],
+  "errors": [],
+  "visibleText": "Back\nQueueLess\nSign In\nSign in as a Customer or a Provider.\nIncorrect email or password.\nSign In\nCreate Account\nTest accounts: customer@example.com or provider@example.com, password demopass."
+}
