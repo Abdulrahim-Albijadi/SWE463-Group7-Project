@@ -1,0 +1,9 @@
+{
+  "step": "Create isolated Campus Barber queue",
+  "passed": true,
+  "name": "Campus Barber",
+  "averageServiceMinutes": 5,
+  "description": "Isolated Phase 3 test - Omar 202177130 - 889fd60618e",
+  "queueId": "dbIZuVG1rDTe3sGaUCHSwaUzmnz2",
+  "snapshot": "- button \"Back to Dashboard\"\n- heading \"QueueLess\" [level=2]\n- button \"Profile O\"\n- group:\n  - text: Create Queue\n  - group \"Queue created CB Campus Barber Isolated Phase 3 test - Omar 202177130 - 889fd60618e Open Avg. 5 min/customer 0 customers waiting Your queue is ready. Customers can now join Campus Barber.\":\n    - button \"Manage Queue\"\n    - button \"Back to Dashboard\"\n- tablist:\n  - tab \"Dashboard\" [selected]\n  - tab \"Manage Queue\""
+}

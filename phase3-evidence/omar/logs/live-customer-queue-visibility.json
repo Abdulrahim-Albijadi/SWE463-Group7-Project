@@ -1,0 +1,9 @@
+{
+  "step": "Customer sign-in in independent Chrome profile and visibility of new queue",
+  "passed": true,
+  "account": {
+    "name": "Omar Phase3 Customer Test",
+    "email": "queueless.phase3.omar.customer.889fd60618e@example.com"
+  },
+  "queueSnapshot": "- group \"CB Campus Barber Isolated Phase 3 test - Omar 202177130 - 889fd60618e ● Open 0 Customers waiting 5 min Avg. service time Join the queue and track your turn.\":\n  - button \"View Queue\""
+}

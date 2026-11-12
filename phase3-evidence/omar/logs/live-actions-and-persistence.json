@@ -1,0 +1,30 @@
+{
+  "source": "LIVE FIREBASE; actual Flutter UI; independent Chrome profiles",
+  "steps": [
+    {
+      "step": "Queue persistence after full browser reload / fresh Flutter runtime",
+      "passed": true,
+      "restartType": "Full browser reload and re-authentication using the newly created Provider account",
+      "providerSnapshot": "- heading \"QueueLess\" [level=2]\n- button \"Profile O\"\n- group:\n  - text: Provider Dashboard\n  - 'group \"CB Campus Barber Isolated Phase 3 test - Omar 202177130 - 889fd60618e Open Avg. 5 min/customer 0 customers waiting 0 in queue, no customer called Average service duration: 5 min Currently called No customer called\"':\n    - button \"Manage Queue\"\n- tablist:\n  - tab \"Dashboard\" [selected]\n  - tab \"Manage Queue\""
+    },
+    {
+      "step": "Customer joins and Provider sees the real-time waiting entry without refresh",
+      "passed": true,
+      "customerSnapshot": "- button \"Back to Home\"\n- heading \"My Queue\" [level=2]\n- group:\n  - text: Your Ticket Waiting\n  - 'group \"CB Campus Barber Isolated Phase 3 test - Omar 202177130 - 889fd60618e YOUR TICKET NUMBER #1 0 Customers ahead 0 min Estimated wait We’ll notify you when your turn is near.\"':\n    - button \"Leave Queue\"\n- tablist:\n  - tab \"Home\"\n  - tab \"My Queue\" [selected]",
+      "providerSnapshot": "- button \"Back to Dashboard\"\n- heading \"QueueLess\" [level=2]\n- button \"Profile O\"\n- group:\n  - text: Queue Management CB Campus Barber Isolated Phase 3 test - Omar 202177130 - 889fd60618e Open Avg. 5 min/customer\n  - group \"No customer called\":\n    - button \"Mark as Served\" [disabled]\n    - button \"Skip\" [disabled]\n  - text: \"Waiting customers (1) #01 Omar Phase3 Customer Test Waiting · Joined 21:21\"\n  - button \"Call Next\"\n  - text: Call Next calls the first waiting customer. Tickets stay fixed; order follows join time.\n- tablist:\n  - tab \"Dashboard\"\n  - tab \"Manage Queue\" [selected]"
+    },
+    {
+      "step": "Call Next reaches Customer session in real time without refresh",
+      "passed": true,
+      "callNextDisabledWhileCalled": true,
+      "customerSnapshot": "- text: It is your turn at Campus Barber.\n- button \"Back to Home\"\n- heading \"My Queue\" [level=2]\n- group: \"Your Ticket Called CB Campus Barber Isolated Phase 3 test - Omar 202177130 - 889fd60618e YOUR TICKET NUMBER #1 It’s your turn! Please proceed to Campus Barber now.\"\n- text: It is your turn at Campus Barber.\n- tablist:\n  - tab \"Home\"\n  - tab \"My Queue\" [selected]",
+      "providerSnapshot": "- text: All caught up No customers are waiting. New customers will appear here when they join.\n- button \"Back to Dashboard\"\n- heading \"QueueLess\" [level=2]\n- button \"Profile O\"\n- group:\n  - text: \"Queue Management CB Campus Barber Isolated Phase 3 test - Omar 202177130 - 889fd60618e Open Avg. 5 min/customer #01 Omar Phase3 Customer Test — Called\"\n  - group \"#01 · Omar Phase3 Customer Test Called\":\n    - button \"Mark as Served\"\n    - button \"Skip\"\n  - text: Waiting customers (0) 1 in queue, including 1 called customer All caught up No customers are waiting. New customers will appear here when they join.\n  - button \"Call Next\" [disabled]\n  - text: Complete or skip the current customer first.\n- tablist:\n  - tab \"Dashboard\"\n  - tab \"Manage Queue\" [selected]"
+    },
+    {
+      "step": "Mark as Served updates Customer session in real time and does not auto-call",
+      "passed": true,
+      "customerSnapshot": "- button \"Back to Home\"\n- heading \"My Queue\" [level=2]\n- group:\n  - text: Your Ticket Served\n  - 'group \"CB Campus Barber Isolated Phase 3 test - Omar 202177130 - 889fd60618e YOUR TICKET NUMBER #1 Your service is complete. Thank you for using QueueLess.\"':\n    - button \"Browse Queues\"\n- text: It is your turn at Campus Barber.\n- tablist:\n  - tab \"Home\"\n  - tab \"My Queue\" [selected]",
+      "providerSnapshot": "- text: \"#01 Omar Phase3 Customer Test — Served Service completed. Call the next customer.\"\n- button \"Back to Dashboard\"\n- heading \"QueueLess\" [level=2]\n- button \"Profile O\"\n- group:\n  - text: \"Queue Management CB Campus Barber Isolated Phase 3 test - Omar 202177130 - 889fd60618e Open Avg. 5 min/customer #01 Omar Phase3 Customer Test — Served Service completed. Call the next customer.\"\n  - group \"No customer called\":\n    - button \"Mark as Served\" [disabled]\n    - button \"Skip\" [disabled]\n  - text: Waiting customers (0)\n  - button \"Call Next\" [disabled]\n  - text: Call Next becomes available when a customer joins.\n- tablist:\n  - tab \"Dashboard\"\n  - tab \"Manage Queue\" [selected]"
+    }
+  ]
+}

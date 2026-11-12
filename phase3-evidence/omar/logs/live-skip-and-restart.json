@@ -1,0 +1,32 @@
+{
+  "source": "LIVE FIREBASE THROUGH ACTUAL FLUTTER UI",
+  "steps": [
+    {
+      "step": "Served ticket persists after Customer full browser reload and sign-in",
+      "passed": true,
+      "customerSnapshot": "- button \"Back to Home\"\n- heading \"My Queue\" [level=2]\n- group:\n  - text: Your Ticket Served\n  - 'group \"CB Campus Barber Isolated Phase 3 test - Omar 202177130 - 889fd60618e YOUR TICKET NUMBER #1 Your service is complete. Thank you for using QueueLess.\"':\n    - button \"Browse Queues\"\n- tablist:\n  - tab \"Home\"\n  - tab \"My Queue\" [selected]"
+    },
+    {
+      "step": "Same newly created Customer rejoins for isolated Skip test; new fixed ticket #2",
+      "passed": true,
+      "customerSnapshot": "- button \"Back to Home\"\n- heading \"My Queue\" [level=2]\n- group:\n  - text: Your Ticket Waiting\n  - 'group \"CB Campus Barber Isolated Phase 3 test - Omar 202177130 - 889fd60618e YOUR TICKET NUMBER #2 0 Customers ahead 0 min Estimated wait We’ll notify you when your turn is near.\"':\n    - button \"Leave Queue\"\n- tablist:\n  - tab \"Home\"\n  - tab \"My Queue\" [selected]",
+      "providerSnapshot": "- button \"Back to Dashboard\"\n- heading \"QueueLess\" [level=2]\n- button \"Profile O\"\n- group:\n  - text: \"Queue Management CB Campus Barber Isolated Phase 3 test - Omar 202177130 - 889fd60618e Open Avg. 5 min/customer #01 Omar Phase3 Customer Test — Served Service completed. Call the next customer.\"\n  - group \"No customer called\":\n    - button \"Mark as Served\" [disabled]\n    - button \"Skip\" [disabled]\n  - text: Waiting customers (1)\n  - button \"Call Next\"\n  - text: Call Next calls the first waiting customer. Tickets stay fixed; order follows join time.\n- tablist:\n  - tab \"Dashboard\"\n  - tab \"Manage Queue\" [selected]"
+    },
+    {
+      "step": "Skip updates Customer session in real time without refresh; no auto-call",
+      "passed": true,
+      "customerSnapshot": "- button \"Back to Home\"\n- heading \"My Queue\" [level=2]\n- group:\n  - text: Your Ticket Skipped\n  - 'group \"CB Campus Barber Isolated Phase 3 test - Omar 202177130 - 889fd60618e YOUR TICKET NUMBER #2 You missed your turn. Rejoin the queue to get a new ticket.\"':\n    - button \"Browse Queues\"\n- text: It is your turn at Campus Barber.\n- tablist:\n  - tab \"Home\"\n  - tab \"My Queue\" [selected]",
+      "providerSnapshot": "- text: \"#02 Omar Phase3 Customer Test — Skipped Removed from queue. No customer auto-called.\"\n- button \"Back to Dashboard\"\n- heading \"QueueLess\" [level=2]\n- button \"Profile O\"\n- group:\n  - text: \"Queue Management CB Campus Barber Isolated Phase 3 test - Omar 202177130 - 889fd60618e Open Avg. 5 min/customer #02 Omar Phase3 Customer Test — Skipped Removed from queue. No customer auto-called.\"\n  - group \"No customer called\":\n    - button \"Mark as Served\" [disabled]\n    - button \"Skip\" [disabled]\n  - text: Waiting customers (0)\n  - button \"Call Next\" [disabled]\n  - text: Call Next becomes available when a customer joins.\n- tablist:\n  - tab \"Dashboard\"\n  - tab \"Manage Queue\" [selected]"
+    },
+    {
+      "step": "Queue and latest skipped ticket persist after both full browser reloads and re-authentication",
+      "passed": true,
+      "restartType": "Full document reloads start fresh Flutter runtimes; re-authentication uses only the new test accounts",
+      "providerSnapshot": "- heading \"QueueLess\" [level=2]\n- button \"Profile O\"\n- group:\n  - text: Provider Dashboard\n  - 'group \"CB Campus Barber Isolated Phase 3 test - Omar 202177130 - 889fd60618e Open Avg. 5 min/customer 0 customers waiting 0 in queue, no customer called Average service duration: 5 min Currently called No customer called\"':\n    - button \"Manage Queue\"\n- tablist:\n  - tab \"Dashboard\" [selected]\n  - tab \"Manage Queue\"",
+      "customerSnapshot": "- text: Home\n- button \"Back to Home\"\n- heading \"My Queue\" [level=2]\n- group:\n  - text: Your Ticket Skipped\n  - 'group \"CB Campus Barber Isolated Phase 3 test - Omar 202177130 - 889fd60618e YOUR TICKET NUMBER #2 You missed your turn. Rejoin the queue to get a new ticket.\"':\n    - button \"Browse Queues\"\n- tablist:\n  - tab \"Home\"\n  - tab \"My Queue\" [selected]"
+    }
+  ],
+  "writtenTestDocuments": [
+    "projects/queueless-group7/databases/(default)/documents/entries/aCDThQynThTPFc7zXyEl"
+  ]
+}

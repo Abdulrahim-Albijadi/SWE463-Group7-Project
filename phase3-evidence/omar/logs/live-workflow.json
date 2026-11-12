@@ -1,0 +1,80 @@
+{
+  "source": "LIVE FIREBASE THROUGH ACTUAL FLUTTER APPLICATION IN CHROME",
+  "status": "PASSED",
+  "new_test_accounts": 2,
+  "queueName": "Campus Barber",
+  "averageServiceMinutes": 5,
+  "queueId": "dbIZuVG1rDTe3sGaUCHSwaUzmnz2",
+  "provider": {
+    "name": "Omar Phase3 Provider Test",
+    "email": "queueless.phase3.omar.provider.889fd60618e@example.com"
+  },
+  "customer": {
+    "name": "Omar Phase3 Customer Test",
+    "email": "queueless.phase3.omar.customer.889fd60618e@example.com"
+  },
+  "ticketOutcomes": {
+    "1": "served",
+    "2": "skipped"
+  },
+  "restartMethod": "Full browser document reloads start fresh Flutter runtimes; sign in again with only the new test accounts.",
+  "existingRecordsModified": false,
+  "settingsRulesOrSharedCodeModified": false,
+  "steps": [
+    {
+      "step": "Provider registration",
+      "passed": true,
+      "evidence": "logs/live-provider-registration.json"
+    },
+    {
+      "step": "Customer registration",
+      "passed": true,
+      "evidence": "logs/live-customer-registration.json"
+    },
+    {
+      "step": "Queue creation",
+      "passed": true,
+      "evidence": "logs/live-queue-creation.json"
+    },
+    {
+      "step": "Queue persistence after full browser reload / fresh Flutter runtime",
+      "passed": true,
+      "evidence": "logs/live-actions-and-persistence.json"
+    },
+    {
+      "step": "Customer joins and Provider sees the real-time waiting entry without refresh",
+      "passed": true,
+      "evidence": "logs/live-actions-and-persistence.json"
+    },
+    {
+      "step": "Call Next reaches Customer session in real time without refresh",
+      "passed": true,
+      "evidence": "logs/live-actions-and-persistence.json"
+    },
+    {
+      "step": "Mark as Served updates Customer session in real time and does not auto-call",
+      "passed": true,
+      "evidence": "logs/live-actions-and-persistence.json"
+    },
+    {
+      "step": "Served ticket persists after Customer full browser reload and sign-in",
+      "passed": true,
+      "evidence": "logs/live-skip-and-restart.json"
+    },
+    {
+      "step": "Same newly created Customer rejoins for isolated Skip test; new fixed ticket #2",
+      "passed": true,
+      "evidence": "logs/live-skip-and-restart.json"
+    },
+    {
+      "step": "Skip updates Customer session in real time without refresh; no auto-call",
+      "passed": true,
+      "evidence": "logs/live-skip-and-restart.json"
+    },
+    {
+      "step": "Queue and latest skipped ticket persist after both full browser reloads and re-authentication",
+      "passed": true,
+      "evidence": "logs/live-skip-and-restart.json"
+    }
+  ]
+}
