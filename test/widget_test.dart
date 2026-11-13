@@ -1,13 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:swe463_group7_project/main.dart';
+import 'package:swe463_group7_project/providers/app_providers.dart';
+import 'package:swe463_group7_project/repositories/repositories.dart';
 
 void main() {
   testWidgets('Customer can sign in and open their ticket', (tester) async {
     await tester.binding.setSurfaceSize(const Size(390, 844));
     addTearDown(() => tester.binding.setSurfaceSize(null));
 
-    await tester.pumpWidget(const QueueLessApp());
+    await tester.pumpWidget(
+      AppProviders(
+        authRepository: AuthRepository(),
+        queueRepository: QueueRepository(),
+        child: const QueueLessApp(),
+      ),
+    );
     await tester.pumpAndSettle();
 
     final signIn = find.widgetWithText(FilledButton, 'Sign In');
