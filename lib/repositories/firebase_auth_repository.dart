@@ -1,10 +1,11 @@
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../models/queue_data.dart';
 import '../logic/queue_rules.dart';
 import 'repositories.dart';
+
+import 'dart:async';
 
 class FirebaseAuthRepository extends AuthRepository {
   FirebaseAuthRepository() : super(seedDemoAccounts: false);
@@ -35,15 +36,67 @@ class FirebaseAuthRepository extends AuthRepository {
   // Restore the signed-in user and listen for profile changes.
   @override
   Stream<AppUser?> authStateChanges() {
-    return _auth.authStateChanges().asyncExpand((user) {
-      if (user == null) {
-        return Stream<AppUser?>.value(null);
-      }
+    late final StreamController<AppUser?> controller;
+    StreamSubscription<User?>? authSubscription;
+    StreamSubscription<DocumentSnapshot<Map<String, dynamic>>>?
+    profileSubscription;
+    var generation = 0;
+    var cancelled = false;
 
-      return _db.collection('users').doc(user.uid).snapshots().map(
-        (snapshot) => _toAppUser(user, snapshot.data()),
-      );
-    });
+    controller = StreamController<AppUser?>(
+      onListen: () {
+        authSubscription = _auth.authStateChanges().listen(
+          (user) async {
+            final currentGeneration = ++generation;
+            final previousSubscription = profileSubscription;
+            profileSubscription = null;
+            await previousSubscription?.cancel();
+
+            if (cancelled || currentGeneration != generation) return;
+
+            if (user == null) {
+              controller.add(null);
+              return;
+            }
+
+            bool isCurrentUser() =>
+                !cancelled &&
+                currentGeneration == generation &&
+                _auth.currentUser?.uid == user.uid;
+
+            profileSubscription = _db
+                .collection('users')
+                .doc(user.uid)
+                .snapshots()
+                .listen(
+                  (snapshot) {
+                    if (isCurrentUser()) {
+                      controller.add(_toAppUser(user, snapshot.data()));
+                    }
+                  },
+                  onError: (Object error, StackTrace stackTrace) {
+                    if (isCurrentUser()) {
+                      controller.addError(error, stackTrace);
+                    }
+                  },
+                );
+          },
+          onError: (Object error, StackTrace stackTrace) {
+            if (!cancelled) {
+              controller.addError(error, stackTrace);
+            }
+          },
+        );
+      },
+      onCancel: () async {
+        cancelled = true;
+        generation++;
+        await authSubscription?.cancel();
+        await profileSubscription?.cancel();
+      },
+    );
+
+    return controller.stream;
   }
 
   // Log in using Firebase Authentication.
@@ -59,8 +112,7 @@ class FirebaseAuthRepository extends AuthRepository {
       );
 
       final user = credential.user!;
-      final document =
-          await _db.collection('users').doc(user.uid).get();
+      final document = await _db.collection('users').doc(user.uid).get();
 
       final appUser = _toAppUser(user, document.data());
 
@@ -87,13 +139,9 @@ class FirebaseAuthRepository extends AuthRepository {
         );
       }
 
-      return AuthOutcome(
-        OperationResult.failure(OperationError.failed),
-      );
+      return AuthOutcome(OperationResult.failure(OperationError.failed));
     } catch (_) {
-      return AuthOutcome(
-        OperationResult.failure(OperationError.failed),
-      );
+      return AuthOutcome(OperationResult.failure(OperationError.failed));
     }
   }
 
@@ -132,9 +180,7 @@ class FirebaseAuthRepository extends AuthRepository {
       return AuthOutcome(OperationResult.ok, appUser);
     } on FirebaseAuthException catch (e) {
       if (e.code == 'email-already-in-use') {
-        return AuthOutcome(
-          OperationResult.failure(OperationError.emailInUse),
-        );
+        return AuthOutcome(OperationResult.failure(OperationError.emailInUse));
       }
 
       if (e.code == 'weak-password') {
@@ -146,9 +192,7 @@ class FirebaseAuthRepository extends AuthRepository {
         );
       }
 
-      return AuthOutcome(
-        OperationResult.failure(OperationError.failed),
-      );
+      return AuthOutcome(OperationResult.failure(OperationError.failed));
     } catch (_) {
       // Avoid leaving an incomplete account after a failed profile write.
       if (createdUser != null) {
@@ -159,9 +203,7 @@ class FirebaseAuthRepository extends AuthRepository {
         }
       }
 
-      return AuthOutcome(
-        OperationResult.failure(OperationError.failed),
-      );
+      return AuthOutcome(OperationResult.failure(OperationError.failed));
     }
   }
 
