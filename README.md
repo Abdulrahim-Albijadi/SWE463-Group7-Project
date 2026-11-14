@@ -24,7 +24,7 @@ These are assigned areas. The Phase 3 report must record each member's actual co
 | F1 | Accounts and roles | Implemented | Firebase email/password registration and sign-in, Customer/Provider roles, profile display, role-specific navigation, and logout. |
 | F2 | Queue creation and management | Implemented | Create one queue per provider; display waiting customers; Call Next, Mark as Served, and Skip. |
 | F3 | Join and leave | Implemented | Browse queues, view details, join, leave with confirmation while waiting, and rejoin with a new ticket. |
-| F4 | Live queue tracking | Implemented | Firestore snapshot subscriptions update queue and membership data; screens display ticket and status information. Simultaneous operation on two devices remains to be verified. |
+| F4 | Live queue tracking | Implemented | Firestore snapshot subscriptions update queue and membership data; screens display ticket and status information. Live updates between independent Chrome profiles are documented in [Provider verification](docs/provider_report.md); simultaneous use on two physical devices remains unverified. |
 | F5 | Estimated waiting time | Implemented | Customers ahead multiplied by the provider's average service duration; the called customer counts as ahead. |
 | F6 | Queue notifications | In progress | Near-turn and called in-app banners/messages work. FCM device registration, a trusted sender, and background push delivery are not implemented. |
 
@@ -95,7 +95,7 @@ flutter devices
 flutter run -d <device-id>
 ```
 
-Replace `<device-id>` with an ID reported by `flutter devices`. Android on a physical HONOR device is the manually verified platform. Other platform builds and startup from a clean checkout have not yet been verified in this testing session.
+Replace `<device-id>` with an ID reported by `flutter devices`. Android on a physical HONOR device is manually verified. A separate clean checkout at `7cdd0a0` passed dependency resolution, analysis, its then-current 69 tests, Android build/install/start, Firebase sign-in, and a queue read on the same configured machine. At `4d87822`, analysis, all 81 tests, and an Android Provider Dashboard/Manage Queue smoke check passed. The latter revision was not retested in a second clean clone. Omar's archived evidence also documents live Firebase operation in Chrome; see [Provider verification](docs/provider_report.md).
 
 ### Test accounts
 
@@ -118,22 +118,31 @@ Use a dedicated provider queue to avoid changing another team member's demonstra
 9. Call the second customer without serving them. Confirm the third account still shows one ahead and 5 minutes. Serve the second customer; the third account should remain waiting with zero ahead and zero minutes until Call Next is explicitly used.
 10. Verify logout and account switching return to the expected screens without a stale profile-listener error.
 
-Switching accounts on one device verifies persisted results across sessions. Use two separately configured devices for the remaining simultaneous live-update check.
+Switching accounts on one device verifies persisted results across sessions. Omar's [live workflow records](docs/evidence/logs/live-workflow.json) document updates between independent Chrome profiles without refreshing. These browser sessions do not establish simultaneous operation on two physical devices.
 
 ### Recorded validation
 
-The following results were reported during the Android verification session on 13 November 2026:
+Latest verification on **14 November 2026**, at main revision **`4d87822`** after PR #15:
 
 - `flutter analyze`: no issues found.
-- `flutter test`: all 69 tests passed before merging the auth listener fix.
-- Staged diff checks passed for the reviewed code changes.
+- `flutter test`: **all 81 tests passed**. This includes the existing 78 tests and three relocated Provider workflow tests; routine execution does not regenerate archived screenshots.
+- The application ran on the physical HONOR device. Provider Dashboard and Manage Queue displayed their data and navigation worked after the Provider screen separation.
+- Main was synchronized with `origin/main`; the three generated macOS/Windows plugin-file changes remained local and outside the reviewed commits.
+
+Earlier checks on **13 November 2026**:
+
+- A separate clone at `7cdd0a0` passed `flutter pub get`, analysis, all then-existing 69 tests, Android build/install/start, Firebase sign-in, and a queue read on the existing configured machine.
+- The Provider loading/recovery fix added nine regression tests; all 78 tests passed before PR #14 was merged. Provider Dashboard and Manage Queue also passed the subsequent Android smoke check at `7872f70`.
 - Firebase registration for both roles, provider queue creation, logout, and account switching succeeded.
-- Join, leave, rejoin, called, served, and skipped flows succeeded.
+- Join, cancel/confirm leave, rejoin, called, served, and skipped flows succeeded.
 - Three-customer checks confirmed 2 ahead → 10 minutes, 1 ahead → 5 minutes, and 0 ahead → 0 minutes with a fixed ticket number.
 - The called customer remained included in customers ahead; serving did not automatically call the next customer.
 - Near-turn and called in-app messages were observed.
+- Staged diff checks passed for the reviewed fixes and documentation changes.
 
-These results describe the tested revision and session; rerun the commands after further code changes.
+Omar's original **12 November 2026** browser/Firebase evidence documents independent Customer/Provider sessions, live updates without refreshing, and queue/terminal-ticket persistence after reload and explicit sign-in. The later organization work and its logs are described in [Provider testing](docs/provider_testing.md). Historical failures remain in the archived logs; later passing results are recorded separately.
+
+These results apply to the stated revisions and environments. A clean clone of the latest revision, a completely new development machine, and automatic navigation into a restored session are not claimed. Rerun relevant checks after further code changes.
 
 ## Loading, empty, validation, and failure states
 
@@ -144,8 +153,8 @@ The inspected provider screens include loading and load-error states with Retry,
 - **Push notifications:** no `firebase_messaging` or background push implementation is present. In-app messages do not provide notifications while the app is closed or in the background.
 - **Concurrent ticket allocation:** the Firebase repository calculates ticket numbers client-side. Simultaneous joins may receive duplicate numbers; transactional allocation remains future work.
 - **Concurrency verification:** the single-active-membership and single-called-customer rules need review and testing under simultaneous requests. Current manual checks used sequential actions.
-- **Fresh setup:** clean-checkout startup and the completeness of Firebase setup instructions must be verified before submission.
-- **Multiple devices/platforms:** simultaneous two-device updates and non-Android builds have not been verified in the recorded session.
+- **Fresh setup:** a clean checkout at `7cdd0a0` ran successfully on the existing configured Android development machine. A completely new machine/signing key and a clean clone of the latest revision have not been verified; Firebase configuration and Android application restrictions must match that environment.
+- **Multiple devices/platforms:** live Firebase operation across independent Chrome profiles is documented in the archived Provider evidence. Simultaneous operation on two physical devices and native iOS/desktop builds remain unverified.
 - **Old demo text:** the Login screen still pre-fills and displays sample account credentials that are not guaranteed to exist in Firebase.
 - **Failure-path verification:** controlled network failures and all retry/validation variants have not been manually exercised in the recorded session.
 - **Submission evidence:** finalize the Phase 3 PDF, verify each member's contribution evidence, and create the `phase-3` tag only when the submitted revision is ready. This README does not claim the tag already exists.
@@ -201,4 +210,4 @@ These are `pubspec.yaml` constraints; `pubspec.lock` records resolved versions. 
 
 Retain third-party notices and review the LICENSE files for the resolved package versions before distribution. The Phase 2 reference record identifies Flutter as BSD 3-Clause, Provider as MIT, Material Icons as Apache License 2.0, Firebase documentation content as CC BY 4.0 with code samples under Apache License 2.0, and Figma as subject to its terms of service. Documentation licenses do not replace package licenses or Firebase service terms.
 
-The team made the design and product decisions and is responsible for understanding and reviewing the submitted work. Figma AI and ChatGPT were used for some screen drafts, Flutter starter code examples, and suggestions. Claude was used to help structure the Phase 2 report and README and correct grammar. During Phase 3, ChatGPT assisted with debugging the customer smoke-test provider setup and Firebase profile-listener behavior, planning manual checks, and drafting this README from supplied code and reported results. Each member must ensure this disclosure also covers any other AI assistance used in their contribution. AI assistance is not evidence of a member's authorship or completed work.
+The team made the design and product decisions and is responsible for understanding and reviewing the submitted work. Figma AI and ChatGPT were used for some screen drafts, Flutter starter code examples, and suggestions. Claude was used to help structure the Phase 2 report and README and correct grammar. During Phase 3, ChatGPT assisted with debugging the customer smoke-test provider setup and Firebase profile-listener behavior, preparing the Provider loading/stream-recovery fix and nine regression tests, planning manual checks, and drafting this README and the Phase 3 report from supplied code and reported results. Each member must ensure this disclosure also covers any other AI assistance used in their contribution. AI assistance is not evidence of a member's authorship or completed work.
