@@ -1,6 +1,13 @@
 # Miscellaneous
 *.class
 *.log
+# Retain archived Provider verification evidence at the paths used by the report.
+!/docs/evidence/logs/flutter-pub-get.log
+!/docs/evidence/logs/flutter-analyze.log
+!/docs/evidence/logs/flutter-test.log
+!/docs/evidence/logs/flutter-version.log
+!/docs/evidence/logs/mock-evidence-tests.log
+!/docs/evidence/logs/chrome-launch.log
 *.pyc
 *.swp
 .DS_Store

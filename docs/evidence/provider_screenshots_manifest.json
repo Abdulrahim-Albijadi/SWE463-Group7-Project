@@ -7,7 +7,7 @@
   "mock_warning": "Mock screenshots remain UI-only evidence and are not used for the live Firebase acceptance results.",
   "screenshots": [
     {
-      "file": "screenshots/live-chrome-authentication-probe.png",
+      "file": "provider_screenshots/live-chrome-authentication-probe.png",
       "source": "live_chrome_existing_firebase_configuration",
       "scope": "Initial startup or rejected login only",
       "width": 390,
@@ -15,7 +15,7 @@
       "sha256": "9d2580c819b6c79208297ab7e527366a8c64732313725a223a32698c8b944518"
     },
     {
-      "file": "screenshots/live-chrome-firebase-login.png",
+      "file": "provider_screenshots/live-chrome-firebase-login.png",
       "source": "live_chrome_existing_firebase_configuration",
       "scope": "Initial startup or rejected login only",
       "width": 390,
@@ -23,7 +23,7 @@
       "sha256": "02573fba7d3c2ab7475f8b9a08e7e137e82924dd0ca19e6b5dd635907d4019fa"
     },
     {
-      "file": "screenshots/live-create-queue-form.png",
+      "file": "provider_screenshots/live-create-queue-form.png",
       "source": "live_chrome_existing_firebase_configuration",
       "scope": "Live isolated Provider/Customer verification; see logs/live-workflow.json",
       "width": 430,
@@ -31,7 +31,7 @@
       "sha256": "1bbd264ebdef461da37fcdcfb73ef13831702154d87b56dca4fd56bda9824d7d"
     },
     {
-      "file": "screenshots/live-customer-called.png",
+      "file": "provider_screenshots/live-customer-called.png",
       "source": "live_chrome_existing_firebase_configuration",
       "scope": "Live isolated Provider/Customer verification; see logs/live-workflow.json",
       "width": 430,
@@ -39,7 +39,7 @@
       "sha256": "bd72d3e27c23e914a9892804e683c7cb82924526e94889a7c1c32f71882461ac"
     },
     {
-      "file": "screenshots/live-customer-profile.png",
+      "file": "provider_screenshots/live-customer-profile.png",
       "source": "live_chrome_existing_firebase_configuration",
       "scope": "Live isolated Provider/Customer verification; see logs/live-workflow.json",
       "width": 430,
@@ -47,7 +47,7 @@
       "sha256": "be3fbbcacfb164826215b8f809701be274c9281eb5ef14b5feffe28e537836d9"
     },
     {
-      "file": "screenshots/live-customer-queue-details.png",
+      "file": "provider_screenshots/live-customer-queue-details.png",
       "source": "live_chrome_existing_firebase_configuration",
       "scope": "Live isolated Provider/Customer verification; see logs/live-workflow.json",
       "width": 430,
@@ -55,7 +55,7 @@
       "sha256": "8df1ddfabea06f51f5fb71fe679629001482cad9d1a37998ffe003823c5cf629"
     },
     {
-      "file": "screenshots/live-customer-registration-form.png",
+      "file": "provider_screenshots/live-customer-registration-form.png",
       "source": "live_chrome_existing_firebase_configuration",
       "scope": "Live isolated Provider/Customer verification; see logs/live-workflow.json",
       "width": 430,
@@ -63,7 +63,7 @@
       "sha256": "340eab6730d0db30fe0dfe159dd61fd5309e615d31bdd2a270d2684c2e376d94"
     },
     {
-      "file": "screenshots/live-customer-registration-result.png",
+      "file": "provider_screenshots/live-customer-registration-result.png",
       "source": "live_chrome_existing_firebase_configuration",
       "scope": "Live isolated Provider/Customer verification; see logs/live-workflow.json",
       "width": 430,
@@ -71,7 +71,7 @@
       "sha256": "be3fbbcacfb164826215b8f809701be274c9281eb5ef14b5feffe28e537836d9"
     },
     {
-      "file": "screenshots/live-customer-sees-queue.png",
+      "file": "provider_screenshots/live-customer-sees-queue.png",
       "source": "live_chrome_existing_firebase_configuration",
       "scope": "Live isolated Provider/Customer verification; see logs/live-workflow.json",
       "width": 382,
@@ -79,7 +79,7 @@
       "sha256": "6d4639c50ab878e04bee7092c96f004b57ed3fb3ab8e117787d150a50360a6f2"
     },
     {
-      "file": "screenshots/live-customer-served.png",
+      "file": "provider_screenshots/live-customer-served.png",
       "source": "live_chrome_existing_firebase_configuration",
       "scope": "Live isolated Provider/Customer verification; see logs/live-workflow.json",
       "width": 430,
@@ -87,7 +87,7 @@
       "sha256": "4136f7a22471361c195cc4fe488a0fd2adab5feede64dddd56fbe7fbe0b9d11f"
     },
     {
-      "file": "screenshots/live-customer-skipped-after-restart.png",
+      "file": "provider_screenshots/live-customer-skipped-after-restart.png",
       "source": "live_chrome_existing_firebase_configuration",
       "scope": "Live isolated Provider/Customer verification; see logs/live-workflow.json",
       "width": 430,
@@ -95,7 +95,7 @@
       "sha256": "b83bfd17819c8ebd506ffd274d7832d38927444291a35ef2ce429a2eaaf33ab0"
     },
     {
-      "file": "screenshots/live-customer-skipped.png",
+      "file": "provider_screenshots/live-customer-skipped.png",
       "source": "live_chrome_existing_firebase_configuration",
       "scope": "Live isolated Provider/Customer verification; see logs/live-workflow.json",
       "width": 430,
@@ -103,7 +103,7 @@
       "sha256": "612d839dc628256af03819452a73f2ad1e104132343d279c8100c4470035ae82"
     },
     {
-      "file": "screenshots/live-management-empty.png",
+      "file": "provider_screenshots/live-management-empty.png",
       "source": "live_chrome_existing_firebase_configuration",
       "scope": "Live isolated Provider/Customer verification; see logs/live-workflow.json",
       "width": 430,
@@ -111,7 +111,7 @@
       "sha256": "044c090b15715c4c5a90c48f0f4893e6f1edfe4c65e3a67ba4471fcc4fd95a4d"
     },
     {
-      "file": "screenshots/live-provider-called.png",
+      "file": "provider_screenshots/live-provider-called.png",
       "source": "live_chrome_existing_firebase_configuration",
       "scope": "Live isolated Provider/Customer verification; see logs/live-workflow.json",
       "width": 430,
@@ -119,7 +119,7 @@
       "sha256": "a8acc24c4eec1973fa46e1dc0bf1f0234d4a4a70514412c5289013a9bdc18606"
     },
     {
-      "file": "screenshots/live-provider-dashboard-after-restart.png",
+      "file": "provider_screenshots/live-provider-dashboard-after-restart.png",
       "source": "live_chrome_existing_firebase_configuration",
       "scope": "Live isolated Provider/Customer verification; see logs/live-workflow.json",
       "width": 430,
@@ -127,7 +127,7 @@
       "sha256": "fb3d30d9f2221262393e3dfaf0a4bc03048e2381a052cf3a054397fceb9649bf"
     },
     {
-      "file": "screenshots/live-provider-final-persistence.png",
+      "file": "provider_screenshots/live-provider-final-persistence.png",
       "source": "live_chrome_existing_firebase_configuration",
       "scope": "Live isolated Provider/Customer verification; see logs/live-workflow.json",
       "width": 430,
@@ -135,7 +135,7 @@
       "sha256": "fb3d30d9f2221262393e3dfaf0a4bc03048e2381a052cf3a054397fceb9649bf"
     },
     {
-      "file": "screenshots/live-provider-registration-form.png",
+      "file": "provider_screenshots/live-provider-registration-form.png",
       "source": "live_chrome_existing_firebase_configuration",
       "scope": "Live isolated Provider/Customer verification; see logs/live-workflow.json",
       "width": 430,
@@ -143,7 +143,7 @@
       "sha256": "30761074b7895bcd0aa316fb90a5d1184c1dd842a89a025bd5fe75fe36abefe3"
     },
     {
-      "file": "screenshots/live-provider-registration-result.png",
+      "file": "provider_screenshots/live-provider-registration-result.png",
       "source": "live_chrome_existing_firebase_configuration",
       "scope": "Live isolated Provider/Customer verification; see logs/live-workflow.json",
       "width": 430,
@@ -151,7 +151,7 @@
       "sha256": "363dc0993d44664e422e86b0c413de8aef17fe81d93b0ff347cdc982a3c909bd"
     },
     {
-      "file": "screenshots/live-provider-served.png",
+      "file": "provider_screenshots/live-provider-served.png",
       "source": "live_chrome_existing_firebase_configuration",
       "scope": "Live isolated Provider/Customer verification; see logs/live-workflow.json",
       "width": 430,
@@ -159,7 +159,7 @@
       "sha256": "b2d4f369576805660b4103d183a7cc63e46c8b1083ef9d8a6a7d2829bf9609c7"
     },
     {
-      "file": "screenshots/live-provider-skipped.png",
+      "file": "provider_screenshots/live-provider-skipped.png",
       "source": "live_chrome_existing_firebase_configuration",
       "scope": "Live isolated Provider/Customer verification; see logs/live-workflow.json",
       "width": 430,
@@ -167,7 +167,7 @@
       "sha256": "bf43504ab7baccf92ade368b1db7aeb9f6d93461f855090446157877cbe5040a"
     },
     {
-      "file": "screenshots/live-provider-waiting-list.png",
+      "file": "provider_screenshots/live-provider-waiting-list.png",
       "source": "live_chrome_existing_firebase_configuration",
       "scope": "Live isolated Provider/Customer verification; see logs/live-workflow.json",
       "width": 430,
@@ -175,7 +175,7 @@
       "sha256": "5404673cea55d13ecf3b70adf79029f47ce6406b267609ec71e8de6218e49930"
     },
     {
-      "file": "screenshots/live-queue-created.png",
+      "file": "provider_screenshots/live-queue-created.png",
       "source": "live_chrome_existing_firebase_configuration",
       "scope": "Live isolated Provider/Customer verification; see logs/live-workflow.json",
       "width": 430,
@@ -183,7 +183,7 @@
       "sha256": "6dfb68c229bfde4f8074b32b3ecbfa9ad4c28098732edfd230f1f6a5a8265f03"
     },
     {
-      "file": "screenshots/mock-call-next.png",
+      "file": "provider_screenshots/mock-call-next.png",
       "source": "local_mock_widget_test",
       "scope": "Local UI only; no Firebase",
       "width": 780,
@@ -191,7 +191,7 @@
       "sha256": "548dc7aab83e239f71a116f413af6e08a7ad22797a498e02922afb1770e4c0de"
     },
     {
-      "file": "screenshots/mock-create-invalid-duration.png",
+      "file": "provider_screenshots/mock-create-invalid-duration.png",
       "source": "local_mock_widget_test",
       "scope": "Local UI only; no Firebase",
       "width": 780,
@@ -199,7 +199,7 @@
       "sha256": "5c3640559d7a212667fbd61082b1f674ed79a12de81214d398ffa87255f88387"
     },
     {
-      "file": "screenshots/mock-create-queue-creating.png",
+      "file": "provider_screenshots/mock-create-queue-creating.png",
       "source": "local_mock_widget_test",
       "scope": "Local UI only; no Firebase",
       "width": 780,
@@ -207,7 +207,7 @@
       "sha256": "af7e88669bf10c015a615685a23b58b5e7965abf53edc8dabd425248d1a5d442"
     },
     {
-      "file": "screenshots/mock-create-queue-error.png",
+      "file": "provider_screenshots/mock-create-queue-error.png",
       "source": "local_mock_widget_test",
       "scope": "Local UI only; no Firebase",
       "width": 780,
@@ -215,7 +215,7 @@
       "sha256": "c234305875ced4ec444554c83cfd2c12ffc5e37d05db314780c9204ccc06d85e"
     },
     {
-      "file": "screenshots/mock-create-queue-form.png",
+      "file": "provider_screenshots/mock-create-queue-form.png",
       "source": "local_mock_widget_test",
       "scope": "Local UI only; no Firebase",
       "width": 780,
@@ -223,7 +223,7 @@
       "sha256": "948fbb0838091241e07a758d79b907ebd92d52a57325f0185214b627f35e176e"
     },
     {
-      "file": "screenshots/mock-create-queue-success.png",
+      "file": "provider_screenshots/mock-create-queue-success.png",
       "source": "local_mock_widget_test",
       "scope": "Local UI only; no Firebase",
       "width": 780,
@@ -231,7 +231,7 @@
       "sha256": "f9b79313dca9ec6338e6797de6354f804037e4afbe6704901d73a9e8e9286877"
     },
     {
-      "file": "screenshots/mock-create-required-fields.png",
+      "file": "provider_screenshots/mock-create-required-fields.png",
       "source": "local_mock_widget_test",
       "scope": "Local UI only; no Firebase",
       "width": 780,
@@ -239,7 +239,7 @@
       "sha256": "2afbdb114562745ab8cf2bebe00079b18be197bf5b269984c7b827b9d12963ec"
     },
     {
-      "file": "screenshots/mock-customer-waiting-list.png",
+      "file": "provider_screenshots/mock-customer-waiting-list.png",
       "source": "local_mock_widget_test",
       "scope": "Local UI only; no Firebase",
       "width": 780,
@@ -247,7 +247,7 @@
       "sha256": "12300f5fef0dbec47685529a40c2a525a966475d2aa5894ff09358308c24a1e5"
     },
     {
-      "file": "screenshots/mock-dashboard-active.png",
+      "file": "provider_screenshots/mock-dashboard-active.png",
       "source": "local_mock_widget_test",
       "scope": "Local UI only; no Firebase",
       "width": 780,
@@ -255,7 +255,7 @@
       "sha256": "c8ea0cef58372de6d3d7bdd9c1151142a3ff688f006b585c0f6aa4e7f0cced54"
     },
     {
-      "file": "screenshots/mock-dashboard-empty.png",
+      "file": "provider_screenshots/mock-dashboard-empty.png",
       "source": "local_mock_widget_test",
       "scope": "Local UI only; no Firebase",
       "width": 780,
@@ -263,7 +263,7 @@
       "sha256": "a3977f2be17b21a333729e521d22c6d204aab8665300db539d7bf3601ea2ce0c"
     },
     {
-      "file": "screenshots/mock-dashboard-error.png",
+      "file": "provider_screenshots/mock-dashboard-error.png",
       "source": "local_mock_widget_test",
       "scope": "Local UI only; no Firebase",
       "width": 780,
@@ -271,7 +271,7 @@
       "sha256": "cdbb33f23635aa72e96a43755b8c0731deafbbb68f2815a9d82fcbe0f81930b6"
     },
     {
-      "file": "screenshots/mock-dashboard-loading.png",
+      "file": "provider_screenshots/mock-dashboard-loading.png",
       "source": "local_mock_widget_test",
       "scope": "Local UI only; no Firebase",
       "width": 780,
@@ -279,7 +279,7 @@
       "sha256": "d3f0ccff7a88f55a340dcd9110b4edb5dfc0d5f04a69bdb244d839491ba85666"
     },
     {
-      "file": "screenshots/mock-dashboard-retry-recovered.png",
+      "file": "provider_screenshots/mock-dashboard-retry-recovered.png",
       "source": "local_mock_widget_test",
       "scope": "Local UI only; no Firebase",
       "width": 780,
@@ -287,7 +287,7 @@
       "sha256": "a3977f2be17b21a333729e521d22c6d204aab8665300db539d7bf3601ea2ce0c"
     },
     {
-      "file": "screenshots/mock-duplicate-queue-prevented.png",
+      "file": "provider_screenshots/mock-duplicate-queue-prevented.png",
       "source": "local_mock_widget_test",
       "scope": "Local UI only; no Firebase",
       "width": 780,
@@ -295,7 +295,7 @@
       "sha256": "1f2e2b0fb7254c3796a3f0d50ece53a6d28073ef3f5a0d5c193217ebf228c6d0"
     },
     {
-      "file": "screenshots/mock-management-empty.png",
+      "file": "provider_screenshots/mock-management-empty.png",
       "source": "local_mock_widget_test",
       "scope": "Local UI only; no Firebase",
       "width": 780,
@@ -303,7 +303,7 @@
       "sha256": "7ea3dbca64fffd952cdf73b876962b3ed528a688951d34e60cb70f606700c877"
     },
     {
-      "file": "screenshots/mock-management-update-error.png",
+      "file": "provider_screenshots/mock-management-update-error.png",
       "source": "local_mock_widget_test",
       "scope": "Local UI only; no Firebase",
       "width": 780,
@@ -311,7 +311,7 @@
       "sha256": "5c89596fa3d67e7da23b7cf833cd60338eac419c67bbeffcb18f0b2a5173bff6"
     },
     {
-      "file": "screenshots/mock-management-update-retry-recovered.png",
+      "file": "provider_screenshots/mock-management-update-retry-recovered.png",
       "source": "local_mock_widget_test",
       "scope": "Local UI only; no Firebase",
       "width": 780,
@@ -319,7 +319,7 @@
       "sha256": "a2b65507bea15915bc70a7c9ad0577402286fbbf67619af2f03dcd8c0a8f0705"
     },
     {
-      "file": "screenshots/mock-served.png",
+      "file": "provider_screenshots/mock-served.png",
       "source": "local_mock_widget_test",
       "scope": "Local UI only; no Firebase",
       "width": 780,
@@ -327,12 +327,15 @@
       "sha256": "5c6d38fb2743d71638c0e832f5f1611e3af17a1559582b10c6366f8a931a7c37"
     },
     {
-      "file": "screenshots/mock-skipped.png",
+      "file": "provider_screenshots/mock-skipped.png",
       "source": "local_mock_widget_test",
       "scope": "Local UI only; no Firebase",
       "width": 780,
       "height": 1768,
       "sha256": "d3a0b566368a3cf9647259ce46393b4f44797d7c0946ab35b29d04dec5d2822c"
     }
-  ]
+  ],
+  "evidence_root": "docs/evidence",
+  "path_resolution": "file and live_results paths are relative to this manifest directory",
+  "report": "../provider_report.md"
 }

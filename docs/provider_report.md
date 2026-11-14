@@ -1,4 +1,6 @@
-# QueueLess — Omar's Phase 3 Implementation and Verification
+# QueueLess — Provider Implementation and Verification
+
+## Contribution
 
 **Name:** Omar Alshehri  
 **Student ID:** 202177130  
@@ -36,10 +38,10 @@ The **actual Flutter application** ran in Chrome at `http://localhost:8765` with
 - Provider: `queueless.phase3.omar.provider.889fd60618e@example.com`
 - Customer: `queueless.phase3.omar.customer.889fd60618e@example.com`
 - Queue document: `queues/dbIZuVG1rDTe3sGaUCHSwaUzmnz2`
-- Queue description: `Isolated Phase 3 test - Omar 202177130 - 889fd60618e`
+- Queue description: isolated Phase 3 verification marker; the exact captured value is retained in the [queue creation log](evidence/logs/live-queue-creation.json).
 - Test outcomes: ticket #1 Served; ticket #2 Skipped. The new test accounts and records were retained; existing records were not modified. Passwords and tokens are excluded from the evidence package.
 
-Audit evidence: [live workflow summary](logs/live-workflow.json), [Provider registration](logs/live-provider-registration.json), [Customer registration](logs/live-customer-registration.json), [queue creation](logs/live-queue-creation.json), [Customer visibility](logs/live-customer-queue-visibility.json), [join/call/serve/persistence](logs/live-actions-and-persistence.json), [Skip and final restart](logs/live-skip-and-restart.json), [final UI checkpoint](logs/live-final-checkpoint.json).
+Audit evidence: [live workflow summary](evidence/logs/live-workflow.json), [Provider registration](evidence/logs/live-provider-registration.json), [Customer registration](evidence/logs/live-customer-registration.json), [queue creation](evidence/logs/live-queue-creation.json), [Customer visibility](evidence/logs/live-customer-queue-visibility.json), [join/call/serve/persistence](evidence/logs/live-actions-and-persistence.json), [Skip and final restart](evidence/logs/live-skip-and-restart.json), [final UI checkpoint](evidence/logs/live-final-checkpoint.json).
 
 ## Genuine live screenshots
 
@@ -47,36 +49,44 @@ These `live-*.png` images capture the actual application connected to Firebase. 
 
 | Evidence | Files |
 | --- | --- |
-| New accounts | [Provider registration](screenshots/live-provider-registration-form.png), [Provider Dashboard after registration](screenshots/live-provider-registration-result.png), [Customer registration](screenshots/live-customer-registration-form.png), [Customer profile](screenshots/live-customer-profile.png) |
-| Create Queue | [Five-minute form](screenshots/live-create-queue-form.png), [successful creation](screenshots/live-queue-created.png) |
-| Customer visibility / join | [New queue visible to Customer](screenshots/live-customer-sees-queue.png), [queue details](screenshots/live-customer-queue-details.png), [Provider waiting list](screenshots/live-provider-waiting-list.png) |
-| Call Next | [Provider Called](screenshots/live-provider-called.png), [Customer Called](screenshots/live-customer-called.png) |
-| Served | [Provider Served](screenshots/live-provider-served.png), [Customer Served](screenshots/live-customer-served.png) |
-| Skip | [Provider Skipped](screenshots/live-provider-skipped.png), [Customer Skipped](screenshots/live-customer-skipped.png) |
-| Persistence | [Provider after restart](screenshots/live-provider-final-persistence.png), [Customer Skipped after restart](screenshots/live-customer-skipped-after-restart.png) |
+| New accounts | [Provider registration](evidence/provider_screenshots/live-provider-registration-form.png), [Provider Dashboard after registration](evidence/provider_screenshots/live-provider-registration-result.png), [Customer registration](evidence/provider_screenshots/live-customer-registration-form.png), [Customer profile](evidence/provider_screenshots/live-customer-profile.png) |
+| Create Queue | [Five-minute form](evidence/provider_screenshots/live-create-queue-form.png), [successful creation](evidence/provider_screenshots/live-queue-created.png) |
+| Customer visibility / join | [New queue visible to Customer](evidence/provider_screenshots/live-customer-sees-queue.png), [queue details](evidence/provider_screenshots/live-customer-queue-details.png), [Provider waiting list](evidence/provider_screenshots/live-provider-waiting-list.png) |
+| Call Next | [Provider Called](evidence/provider_screenshots/live-provider-called.png), [Customer Called](evidence/provider_screenshots/live-customer-called.png) |
+| Served | [Provider Served](evidence/provider_screenshots/live-provider-served.png), [Customer Served](evidence/provider_screenshots/live-customer-served.png) |
+| Skip | [Provider Skipped](evidence/provider_screenshots/live-provider-skipped.png), [Customer Skipped](evidence/provider_screenshots/live-customer-skipped.png) |
+| Persistence | [Provider after restart](evidence/provider_screenshots/live-provider-final-persistence.png), [Customer Skipped after restart](evidence/provider_screenshots/live-customer-skipped-after-restart.png) |
 
-The [screenshot manifest](screenshots-manifest.json) lists every file's source, dimensions and SHA-256 hash.
+The [screenshot manifest](evidence/provider_screenshots_manifest.json) lists every file's source, dimensions and SHA-256 hash.
 
-## Automated verification and remaining issues
+## Historical automated verification
 
-The earlier automated checks cover the same unchanged implementation:
+These checks describe the original 12 November revision. Current results are recorded in [provider_testing.md](provider_testing.md).
 
 | Check | Result |
 | --- | --- |
-| `flutter pub get` | **PASS**; constraints unchanged. [Log](logs/flutter-pub-get.log) |
-| `flutter analyze` | **PASS**, no issues. [Log](logs/flutter-analyze.log) |
-| `flutter test` | **68 passed, 1 failed overall**; all 27 Provider UI tests passed. [Log](logs/flutter-test.log) |
-| Separate mock screenshot harness | **3 passed**; local UI captures only. [Log](logs/mock-evidence-tests.log) |
+| `flutter pub get` | **PASS**; constraints unchanged. [Log](evidence/logs/flutter-pub-get.log) |
+| `flutter analyze` | **PASS**, no issues. [Log](evidence/logs/flutter-analyze.log) |
+| `flutter test` | **68 passed, 1 failed overall**; all 27 Provider UI tests passed. [Log](evidence/logs/flutter-test.log) |
+| Separate mock screenshot harness | **3 passed**; local UI captures only. [Log](evidence/logs/mock-evidence-tests.log) |
 
 Validation, duplicate-queue prevention, simulated loading/error/retry states, delayed snapshots, disposal, 280px layouts and keyboard scrolling were verified in local tests. Failure injection and those edge cases were not repeated against live Firebase in this run.
 
-Teammate follow-up remains:
+Issues recorded at the original revision, subsequently fixed by the team:
 
-1. [Customer smoke test](../../test/widget_test.dart) line 10 omits `AppProviders`, causing `ProviderNotFoundException<MembershipProvider>`. Wrap the app with the existing Providers and test repositories.
-2. [ProviderQueueProvider](../../lib/providers/provider_queue_provider.dart) reports ready before its first entries snapshot and does not automatically clear an entry-stream error on recovery. Shared readiness/error handling remains unchanged; explicit Retry is covered locally.
+1. [Customer smoke test](../test/widget_test.dart) line 10 omits `AppProviders`, causing `ProviderNotFoundException<MembershipProvider>`. Wrap the app with the existing Providers and test repositories.
+2. [ProviderQueueProvider](../lib/providers/provider_queue_provider.dart) reports ready before its first entries snapshot and does not automatically clear an entry-stream error on recovery. Shared readiness/error handling remains unchanged; explicit Retry is covered locally.
 
 There is no remaining blocker for the requested live Provider/Customer acceptance flow. Firebase configuration, security rules, shared code and teammate files were not changed. No commit, push, merge or deployment occurred.
 
 ## Provider workflow for the team report
 
 Provider signs in → Dashboard → Create Queue with name, description and duration → Queue Management. Customers join and appear in order. Call Next calls the first waiting customer and blocks another call until Served or Skip. These actions update the Customer session in real time without automatically calling another customer. Live testing confirmed queue persistence and terminal ticket status after application reloads and sign-in.
+
+## Organization follow-up — 14 November 2026
+
+The results and teammate follow-ups above describe the original 12 November revision. The customer smoke-test setup and Provider queue loading/stream recovery were subsequently fixed by the team and are included in cleanup base revision `7872f70`. Those shared implementations and regression tests were preserved.
+
+Provider screens are now separated under [lib/screens/provider/](../lib/screens/provider/), with shared UI in [provider_widgets.dart](../lib/widgets/provider/provider_widgets.dart). The original screen import remains a compatibility export. Documentation is in `docs/`; original captures and logs are in `docs/evidence/`. Original live/mock labels and capture contents are preserved. All Provider tests, including the optional mock capture harness, are in `test/`. Routine tests do not rewrite archived evidence.
+
+See the [documentation index](README.md) and [Provider testing record](provider_testing.md) for current checks. These local checks do not constitute a new live Firebase session.
