@@ -1,6 +1,8 @@
 // Reproducible UI evidence only. This harness never initializes Firebase.
 // Run from the repository root:
-// flutter test phase3-evidence/omar/provider_evidence_test.dart --reporter expanded
+// flutter test test/provider_evidence_test.dart --reporter expanded
+// Optional image capture (writes to build/provider_screenshots):
+// flutter test test/provider_evidence_test.dart --dart-define=CAPTURE_PROVIDER_SCREENSHOTS=true --reporter expanded
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
@@ -20,7 +22,10 @@ import 'package:swe463_group7_project/providers/provider_queue_provider.dart';
 import 'package:swe463_group7_project/repositories/repositories.dart';
 import 'package:swe463_group7_project/screens/provider_screens.dart';
 
-const _evidenceRoot = 'phase3-evidence/omar';
+const _captureScreenshots = bool.fromEnvironment(
+  'CAPTURE_PROVIDER_SCREENSHOTS',
+);
+const _captureDirectory = 'build/provider_screenshots';
 final _capture = GlobalKey();
 
 class _EvidenceRepository extends QueueRepository {
@@ -187,12 +192,13 @@ Future<void> _shot(WidgetTester tester, String name) async {
   state.position.jumpTo(0);
   await tester.pump(const Duration(milliseconds: 100));
   expect(tester.takeException(), isNull);
+  if (!_captureScreenshots) return;
   await tester.runAsync(() async {
     final boundary =
         _capture.currentContext!.findRenderObject()! as RenderRepaintBoundary;
     final picture = await boundary.toImage(pixelRatio: 2);
     final bytes = await picture.toByteData(format: ui.ImageByteFormat.png);
-    await File('$_evidenceRoot/screenshots/mock-$name.png')
+    await File('$_captureDirectory/mock-$name.png')
         .writeAsBytes(bytes!.buffer.asUint8List());
     picture.dispose();
   });
@@ -213,8 +219,10 @@ Future<void> _fill(WidgetTester tester, {String minutes = '5'}) async {
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   setUpAll(() async {
-    Directory('$_evidenceRoot/screenshots').createSync(recursive: true);
-    await _loadFonts();
+    if (_captureScreenshots) {
+      Directory(_captureDirectory).createSync(recursive: true);
+      await _loadFonts();
+    }
   });
 
   testWidgets(

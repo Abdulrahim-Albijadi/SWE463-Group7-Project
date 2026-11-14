@@ -17,6 +17,11 @@ void providerDashboard(BuildContext context) =>
 String providerTicket(QueueEntry entry) =>
     '#${entry.ticketNumber.toString().padLeft(2, '0')}';
 
+String providerQueueCount(int activeCount, bool hasCalledCustomer) =>
+    hasCalledCustomer
+    ? '$activeCount in queue, including 1 called customer'
+    : '$activeCount in queue, no customer called';
+
 const providerCaption = TextStyle(
   fontSize: 13,
   height: 1.45,
@@ -482,4 +487,49 @@ class ProviderNoQueue extends StatelessWidget {
       ],
     ),
   );
+}
+
+class ProviderWaitingCustomer extends StatelessWidget {
+  const ProviderWaitingCustomer({super.key, required this.entry});
+  final QueueEntry entry;
+
+  @override
+  Widget build(BuildContext context) {
+    final joined = entry.joinedAt.toLocal();
+    final time =
+        '${joined.hour.toString().padLeft(2, '0')}:'
+        '${joined.minute.toString().padLeft(2, '0')}';
+    return Row(
+      children: [
+        Text(
+          providerTicket(entry),
+          style: const TextStyle(
+            color: providerTeal,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        const SizedBox(width: 14),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(entry.customerName),
+              Row(
+                children: [
+                  const Icon(Icons.schedule, size: 12, color: providerMuted),
+                  const SizedBox(width: 4),
+                  Expanded(
+                    child: Text(
+                      'Waiting · Joined $time',
+                      style: providerCaption,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
 }

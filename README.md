@@ -162,10 +162,14 @@ The inspected provider screens include loading and load-error states with Retry,
 | `lib/repositories/repositories.dart` | In-memory repository implementations for isolated testing |
 | `lib/repositories/firebase_auth_repository.dart` | Firebase Authentication and Firestore profile integration |
 | `lib/repositories/firebase_queue_repository.dart` | Firestore queue and membership reads/writes and subscriptions |
-| `lib/screens/customer_screens.dart` | Customer Home, Queue Details, and My Queue |
-| `lib/screens/provider_screens.dart` | Provider Dashboard, Create Queue, and Queue Management |
+| `lib/screens/customer/` | Separate Customer Home, Queue Details, and My Queue screens |
+| `lib/screens/customer_screens.dart` | Compatibility exports for the Customer screens |
+| `lib/screens/provider/` | Separate Provider Dashboard, Create Queue, and Queue Management screens |
+| `lib/screens/provider_screens.dart` | Compatibility exports for existing Provider screen imports and routes |
+| `lib/widgets/customer/` | Reusable customer interface widgets |
 | `lib/widgets/provider/` | Reusable provider interface widgets |
 | `test/` | Automated Flutter tests |
+| `docs/` | [Documentation index](docs/README.md), Provider report and testing records, screenshots, and verification logs |
 
 ## Packages
 
