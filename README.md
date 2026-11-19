@@ -24,7 +24,7 @@ These are assigned areas. The Phase 3 report must record each member's actual co
 | F1 | Accounts and roles | Implemented | Firebase email/password registration and sign-in, Customer/Provider roles, profile display, role-specific navigation, and logout. |
 | F2 | Queue creation and management | Implemented | Create one queue per provider; display waiting customers; Call Next, Mark as Served, and Skip. |
 | F3 | Join and leave | Implemented | Browse queues, view details, join, leave with confirmation while waiting, and rejoin with a new ticket. |
-| F4 | Live queue tracking | Implemented | Firestore snapshot subscriptions update queue and membership data; screens display ticket and status information. Live updates between independent Chrome profiles are documented in [Provider verification](docs/provider_report.md); simultaneous use on two physical devices remains unverified. |
+| F4 | Live queue tracking | Implemented | Firestore snapshot subscriptions update queue and membership data; screens display ticket and status information. Live updates between independent Chrome profiles are documented in [Provider verification](docs/provider_testing.md); simultaneous use on two physical devices remains unverified. |
 | F5 | Estimated waiting time | Implemented | Customers ahead multiplied by the provider's average service duration; the called customer counts as ahead. |
 | F6 | Queue notifications | In progress | Near-turn and called in-app banners/messages work. FCM device registration, a trusted sender, and background push delivery are not implemented. |
 
@@ -95,7 +95,7 @@ flutter devices
 flutter run -d <device-id>
 ```
 
-Replace `<device-id>` with an ID reported by `flutter devices`. Android on a physical HONOR device is manually verified. A separate clean checkout at `7cdd0a0` passed dependency resolution, analysis, its then-current 69 tests, Android build/install/start, Firebase sign-in, and a queue read on the same configured machine. At `4d87822`, analysis, all 81 tests, and an Android Provider Dashboard/Manage Queue smoke check passed. The latter revision was not retested in a second clean clone. Omar's archived evidence also documents live Firebase operation in Chrome; see [Provider verification](docs/provider_report.md).
+Replace `<device-id>` with an ID reported by `flutter devices`. Android on a physical HONOR device is manually verified. A separate clean checkout at `7cdd0a0` passed dependency resolution, analysis, its then-current 69 tests, Android build/install/start, Firebase sign-in, and a queue read on the same configured machine. At `4d87822`, analysis, all 81 tests, and an Android Provider Dashboard/Manage Queue smoke check passed. The latter revision was not retested in a second clean clone. Omar's archived evidence also documents live Firebase operation in Chrome; see [Provider verification](docs/provider_testing.md).
 
 ### Test accounts
 

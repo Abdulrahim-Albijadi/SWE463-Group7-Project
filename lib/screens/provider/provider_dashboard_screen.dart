@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../providers/auth_provider.dart';
 import '../../providers/provider_queue_provider.dart';
 import '../../providers/provider_support.dart';
 import '../../widgets/provider/provider_widgets.dart';
@@ -11,20 +12,23 @@ class ProviderDashboardScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final state = context.watch<ProviderQueueProvider>();
+    final pending = ProviderPendingWrite.current(
+      state,
+      context.watch<AuthProvider>().currentUser?.id,
+    );
     final queue = state.queue;
     final called = state.calledEntry;
     return ProviderPage(
       title: 'Provider Dashboard',
       selected: 0,
       canManage: state.status == LoadStatus.ready && queue != null,
-      busy: state.isBusy,
       children: [
         if (state.status == LoadStatus.loading)
           const ProviderLoading()
         else if (state.status == LoadStatus.error)
           ProviderLoadError(onRetry: state.retry)
         else if (queue == null)
-          const ProviderNoQueue()
+          ProviderNoQueue(canCreate: !state.isBusy && pending == null)
         else
           ProviderSurface(
             child: Column(
@@ -43,7 +47,7 @@ class ProviderDashboardScreen extends StatelessWidget {
                 Text(
                   providerQueueCount(
                     state.activeEntries.length,
-                    state.calledEntry != null,
+                    called != null,
                   ),
                   style: providerCaption,
                 ),
@@ -52,7 +56,7 @@ class ProviderDashboardScreen extends StatelessWidget {
                   'Average service duration: ${queue.averageServiceMinutes} min',
                   style: providerCaption,
                 ),
-                const SizedBox(height: 22),
+                const SizedBox(height: 24),
                 const ProviderStatus(
                   icon: Icons.campaign_outlined,
                   text: 'Currently called',
@@ -64,12 +68,10 @@ class ProviderDashboardScreen extends StatelessWidget {
                       : '${providerTicket(called)} · ${called.customerName}',
                   style: providerCaption,
                 ),
-                const SizedBox(height: 22),
+                const SizedBox(height: 24),
                 ProviderButton(
                   label: 'Manage Queue',
-                  onPressed: state.isBusy
-                      ? null
-                      : () => Navigator.pushNamed(context, '/manage-queue'),
+                  onPressed: () => providerManageQueue(context),
                 ),
               ],
             ),
