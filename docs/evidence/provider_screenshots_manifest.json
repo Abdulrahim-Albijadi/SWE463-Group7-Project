@@ -7,335 +7,562 @@
   "mock_warning": "Mock screenshots remain UI-only evidence and are not used for the live Firebase acceptance results.",
   "screenshots": [
     {
-      "file": "provider_screenshots/live-chrome-authentication-probe.png",
+      "file": "provider_screenshots/previous/live-chrome-authentication-probe.png",
       "source": "live_chrome_existing_firebase_configuration",
       "scope": "Initial startup or rejected login only",
       "width": 390,
       "height": 844,
-      "sha256": "9d2580c819b6c79208297ab7e527366a8c64732313725a223a32698c8b944518"
+      "sha256": "9d2580c819b6c79208297ab7e527366a8c64732313725a223a32698c8b944518",
+      "original_file": "provider_screenshots/live-chrome-authentication-probe.png",
+      "collection": "previous"
     },
     {
-      "file": "provider_screenshots/live-chrome-firebase-login.png",
+      "file": "provider_screenshots/previous/live-chrome-firebase-login.png",
       "source": "live_chrome_existing_firebase_configuration",
       "scope": "Initial startup or rejected login only",
       "width": 390,
       "height": 844,
-      "sha256": "02573fba7d3c2ab7475f8b9a08e7e137e82924dd0ca19e6b5dd635907d4019fa"
+      "sha256": "02573fba7d3c2ab7475f8b9a08e7e137e82924dd0ca19e6b5dd635907d4019fa",
+      "original_file": "provider_screenshots/live-chrome-firebase-login.png",
+      "collection": "previous"
     },
     {
-      "file": "provider_screenshots/live-create-queue-form.png",
+      "file": "provider_screenshots/previous/live-create-queue-form.png",
       "source": "live_chrome_existing_firebase_configuration",
       "scope": "Live isolated Provider/Customer verification; see logs/live-workflow.json",
       "width": 430,
       "height": 932,
-      "sha256": "1bbd264ebdef461da37fcdcfb73ef13831702154d87b56dca4fd56bda9824d7d"
+      "sha256": "1bbd264ebdef461da37fcdcfb73ef13831702154d87b56dca4fd56bda9824d7d",
+      "original_file": "provider_screenshots/live-create-queue-form.png",
+      "collection": "previous"
     },
     {
-      "file": "provider_screenshots/live-customer-called.png",
+      "file": "provider_screenshots/previous/live-customer-called.png",
       "source": "live_chrome_existing_firebase_configuration",
       "scope": "Live isolated Provider/Customer verification; see logs/live-workflow.json",
       "width": 430,
       "height": 932,
-      "sha256": "bd72d3e27c23e914a9892804e683c7cb82924526e94889a7c1c32f71882461ac"
+      "sha256": "bd72d3e27c23e914a9892804e683c7cb82924526e94889a7c1c32f71882461ac",
+      "original_file": "provider_screenshots/live-customer-called.png",
+      "collection": "previous"
     },
     {
-      "file": "provider_screenshots/live-customer-profile.png",
+      "file": "provider_screenshots/previous/live-customer-profile.png",
       "source": "live_chrome_existing_firebase_configuration",
       "scope": "Live isolated Provider/Customer verification; see logs/live-workflow.json",
       "width": 430,
       "height": 932,
-      "sha256": "be3fbbcacfb164826215b8f809701be274c9281eb5ef14b5feffe28e537836d9"
+      "sha256": "be3fbbcacfb164826215b8f809701be274c9281eb5ef14b5feffe28e537836d9",
+      "original_file": "provider_screenshots/live-customer-profile.png",
+      "collection": "previous"
     },
     {
-      "file": "provider_screenshots/live-customer-queue-details.png",
+      "file": "provider_screenshots/previous/live-customer-queue-details.png",
       "source": "live_chrome_existing_firebase_configuration",
       "scope": "Live isolated Provider/Customer verification; see logs/live-workflow.json",
       "width": 430,
       "height": 932,
-      "sha256": "8df1ddfabea06f51f5fb71fe679629001482cad9d1a37998ffe003823c5cf629"
+      "sha256": "8df1ddfabea06f51f5fb71fe679629001482cad9d1a37998ffe003823c5cf629",
+      "original_file": "provider_screenshots/live-customer-queue-details.png",
+      "collection": "previous"
     },
     {
-      "file": "provider_screenshots/live-customer-registration-form.png",
+      "file": "provider_screenshots/previous/live-customer-registration-form.png",
       "source": "live_chrome_existing_firebase_configuration",
       "scope": "Live isolated Provider/Customer verification; see logs/live-workflow.json",
       "width": 430,
       "height": 932,
-      "sha256": "340eab6730d0db30fe0dfe159dd61fd5309e615d31bdd2a270d2684c2e376d94"
+      "sha256": "340eab6730d0db30fe0dfe159dd61fd5309e615d31bdd2a270d2684c2e376d94",
+      "original_file": "provider_screenshots/live-customer-registration-form.png",
+      "collection": "previous"
     },
     {
-      "file": "provider_screenshots/live-customer-registration-result.png",
+      "file": "provider_screenshots/previous/live-customer-registration-result.png",
       "source": "live_chrome_existing_firebase_configuration",
       "scope": "Live isolated Provider/Customer verification; see logs/live-workflow.json",
       "width": 430,
       "height": 932,
-      "sha256": "be3fbbcacfb164826215b8f809701be274c9281eb5ef14b5feffe28e537836d9"
+      "sha256": "be3fbbcacfb164826215b8f809701be274c9281eb5ef14b5feffe28e537836d9",
+      "original_file": "provider_screenshots/live-customer-registration-result.png",
+      "collection": "previous"
     },
     {
-      "file": "provider_screenshots/live-customer-sees-queue.png",
+      "file": "provider_screenshots/previous/live-customer-sees-queue.png",
       "source": "live_chrome_existing_firebase_configuration",
       "scope": "Live isolated Provider/Customer verification; see logs/live-workflow.json",
       "width": 382,
       "height": 328,
-      "sha256": "6d4639c50ab878e04bee7092c96f004b57ed3fb3ab8e117787d150a50360a6f2"
+      "sha256": "6d4639c50ab878e04bee7092c96f004b57ed3fb3ab8e117787d150a50360a6f2",
+      "original_file": "provider_screenshots/live-customer-sees-queue.png",
+      "collection": "previous"
     },
     {
-      "file": "provider_screenshots/live-customer-served.png",
+      "file": "provider_screenshots/previous/live-customer-served.png",
       "source": "live_chrome_existing_firebase_configuration",
       "scope": "Live isolated Provider/Customer verification; see logs/live-workflow.json",
       "width": 430,
       "height": 932,
-      "sha256": "4136f7a22471361c195cc4fe488a0fd2adab5feede64dddd56fbe7fbe0b9d11f"
+      "sha256": "4136f7a22471361c195cc4fe488a0fd2adab5feede64dddd56fbe7fbe0b9d11f",
+      "original_file": "provider_screenshots/live-customer-served.png",
+      "collection": "previous"
     },
     {
-      "file": "provider_screenshots/live-customer-skipped-after-restart.png",
+      "file": "provider_screenshots/previous/live-customer-skipped-after-restart.png",
       "source": "live_chrome_existing_firebase_configuration",
       "scope": "Live isolated Provider/Customer verification; see logs/live-workflow.json",
       "width": 430,
       "height": 932,
-      "sha256": "b83bfd17819c8ebd506ffd274d7832d38927444291a35ef2ce429a2eaaf33ab0"
+      "sha256": "b83bfd17819c8ebd506ffd274d7832d38927444291a35ef2ce429a2eaaf33ab0",
+      "original_file": "provider_screenshots/live-customer-skipped-after-restart.png",
+      "collection": "previous"
     },
     {
-      "file": "provider_screenshots/live-customer-skipped.png",
+      "file": "provider_screenshots/previous/live-customer-skipped.png",
       "source": "live_chrome_existing_firebase_configuration",
       "scope": "Live isolated Provider/Customer verification; see logs/live-workflow.json",
       "width": 430,
       "height": 932,
-      "sha256": "612d839dc628256af03819452a73f2ad1e104132343d279c8100c4470035ae82"
+      "sha256": "612d839dc628256af03819452a73f2ad1e104132343d279c8100c4470035ae82",
+      "original_file": "provider_screenshots/live-customer-skipped.png",
+      "collection": "previous"
     },
     {
-      "file": "provider_screenshots/live-management-empty.png",
+      "file": "provider_screenshots/previous/live-management-empty.png",
       "source": "live_chrome_existing_firebase_configuration",
       "scope": "Live isolated Provider/Customer verification; see logs/live-workflow.json",
       "width": 430,
       "height": 932,
-      "sha256": "044c090b15715c4c5a90c48f0f4893e6f1edfe4c65e3a67ba4471fcc4fd95a4d"
+      "sha256": "044c090b15715c4c5a90c48f0f4893e6f1edfe4c65e3a67ba4471fcc4fd95a4d",
+      "original_file": "provider_screenshots/live-management-empty.png",
+      "collection": "previous"
     },
     {
-      "file": "provider_screenshots/live-provider-called.png",
+      "file": "provider_screenshots/previous/live-provider-called.png",
       "source": "live_chrome_existing_firebase_configuration",
       "scope": "Live isolated Provider/Customer verification; see logs/live-workflow.json",
       "width": 430,
       "height": 932,
-      "sha256": "a8acc24c4eec1973fa46e1dc0bf1f0234d4a4a70514412c5289013a9bdc18606"
+      "sha256": "a8acc24c4eec1973fa46e1dc0bf1f0234d4a4a70514412c5289013a9bdc18606",
+      "original_file": "provider_screenshots/live-provider-called.png",
+      "collection": "previous"
     },
     {
-      "file": "provider_screenshots/live-provider-dashboard-after-restart.png",
+      "file": "provider_screenshots/previous/live-provider-dashboard-after-restart.png",
       "source": "live_chrome_existing_firebase_configuration",
       "scope": "Live isolated Provider/Customer verification; see logs/live-workflow.json",
       "width": 430,
       "height": 932,
-      "sha256": "fb3d30d9f2221262393e3dfaf0a4bc03048e2381a052cf3a054397fceb9649bf"
+      "sha256": "fb3d30d9f2221262393e3dfaf0a4bc03048e2381a052cf3a054397fceb9649bf",
+      "original_file": "provider_screenshots/live-provider-dashboard-after-restart.png",
+      "collection": "previous"
     },
     {
-      "file": "provider_screenshots/live-provider-final-persistence.png",
+      "file": "provider_screenshots/previous/live-provider-final-persistence.png",
       "source": "live_chrome_existing_firebase_configuration",
       "scope": "Live isolated Provider/Customer verification; see logs/live-workflow.json",
       "width": 430,
       "height": 932,
-      "sha256": "fb3d30d9f2221262393e3dfaf0a4bc03048e2381a052cf3a054397fceb9649bf"
+      "sha256": "fb3d30d9f2221262393e3dfaf0a4bc03048e2381a052cf3a054397fceb9649bf",
+      "original_file": "provider_screenshots/live-provider-final-persistence.png",
+      "collection": "previous"
     },
     {
-      "file": "provider_screenshots/live-provider-registration-form.png",
+      "file": "provider_screenshots/previous/live-provider-registration-form.png",
       "source": "live_chrome_existing_firebase_configuration",
       "scope": "Live isolated Provider/Customer verification; see logs/live-workflow.json",
       "width": 430,
       "height": 932,
-      "sha256": "30761074b7895bcd0aa316fb90a5d1184c1dd842a89a025bd5fe75fe36abefe3"
+      "sha256": "30761074b7895bcd0aa316fb90a5d1184c1dd842a89a025bd5fe75fe36abefe3",
+      "original_file": "provider_screenshots/live-provider-registration-form.png",
+      "collection": "previous"
     },
     {
-      "file": "provider_screenshots/live-provider-registration-result.png",
+      "file": "provider_screenshots/previous/live-provider-registration-result.png",
       "source": "live_chrome_existing_firebase_configuration",
       "scope": "Live isolated Provider/Customer verification; see logs/live-workflow.json",
       "width": 430,
       "height": 932,
-      "sha256": "363dc0993d44664e422e86b0c413de8aef17fe81d93b0ff347cdc982a3c909bd"
+      "sha256": "363dc0993d44664e422e86b0c413de8aef17fe81d93b0ff347cdc982a3c909bd",
+      "original_file": "provider_screenshots/live-provider-registration-result.png",
+      "collection": "previous"
     },
     {
-      "file": "provider_screenshots/live-provider-served.png",
+      "file": "provider_screenshots/previous/live-provider-served.png",
       "source": "live_chrome_existing_firebase_configuration",
       "scope": "Live isolated Provider/Customer verification; see logs/live-workflow.json",
       "width": 430,
       "height": 932,
-      "sha256": "b2d4f369576805660b4103d183a7cc63e46c8b1083ef9d8a6a7d2829bf9609c7"
+      "sha256": "b2d4f369576805660b4103d183a7cc63e46c8b1083ef9d8a6a7d2829bf9609c7",
+      "original_file": "provider_screenshots/live-provider-served.png",
+      "collection": "previous"
     },
     {
-      "file": "provider_screenshots/live-provider-skipped.png",
+      "file": "provider_screenshots/previous/live-provider-skipped.png",
       "source": "live_chrome_existing_firebase_configuration",
       "scope": "Live isolated Provider/Customer verification; see logs/live-workflow.json",
       "width": 430,
       "height": 932,
-      "sha256": "bf43504ab7baccf92ade368b1db7aeb9f6d93461f855090446157877cbe5040a"
+      "sha256": "bf43504ab7baccf92ade368b1db7aeb9f6d93461f855090446157877cbe5040a",
+      "original_file": "provider_screenshots/live-provider-skipped.png",
+      "collection": "previous"
     },
     {
-      "file": "provider_screenshots/live-provider-waiting-list.png",
+      "file": "provider_screenshots/previous/live-provider-waiting-list.png",
       "source": "live_chrome_existing_firebase_configuration",
       "scope": "Live isolated Provider/Customer verification; see logs/live-workflow.json",
       "width": 430,
       "height": 932,
-      "sha256": "5404673cea55d13ecf3b70adf79029f47ce6406b267609ec71e8de6218e49930"
+      "sha256": "5404673cea55d13ecf3b70adf79029f47ce6406b267609ec71e8de6218e49930",
+      "original_file": "provider_screenshots/live-provider-waiting-list.png",
+      "collection": "previous"
     },
     {
-      "file": "provider_screenshots/live-queue-created.png",
+      "file": "provider_screenshots/previous/live-queue-created.png",
       "source": "live_chrome_existing_firebase_configuration",
       "scope": "Live isolated Provider/Customer verification; see logs/live-workflow.json",
       "width": 430,
       "height": 932,
-      "sha256": "6dfb68c229bfde4f8074b32b3ecbfa9ad4c28098732edfd230f1f6a5a8265f03"
+      "sha256": "6dfb68c229bfde4f8074b32b3ecbfa9ad4c28098732edfd230f1f6a5a8265f03",
+      "original_file": "provider_screenshots/live-queue-created.png",
+      "collection": "previous"
     },
     {
-      "file": "provider_screenshots/mock-call-next.png",
+      "file": "provider_screenshots/previous/mock-call-next.png",
       "source": "local_mock_widget_test",
       "scope": "Local UI only; no Firebase",
       "width": 780,
       "height": 1768,
-      "sha256": "548dc7aab83e239f71a116f413af6e08a7ad22797a498e02922afb1770e4c0de"
+      "sha256": "548dc7aab83e239f71a116f413af6e08a7ad22797a498e02922afb1770e4c0de",
+      "original_file": "provider_screenshots/mock-call-next.png",
+      "collection": "previous"
     },
     {
-      "file": "provider_screenshots/mock-create-invalid-duration.png",
+      "file": "provider_screenshots/previous/mock-create-invalid-duration.png",
       "source": "local_mock_widget_test",
       "scope": "Local UI only; no Firebase",
       "width": 780,
       "height": 1768,
-      "sha256": "5c3640559d7a212667fbd61082b1f674ed79a12de81214d398ffa87255f88387"
+      "sha256": "5c3640559d7a212667fbd61082b1f674ed79a12de81214d398ffa87255f88387",
+      "original_file": "provider_screenshots/mock-create-invalid-duration.png",
+      "collection": "previous"
     },
     {
-      "file": "provider_screenshots/mock-create-queue-creating.png",
+      "file": "provider_screenshots/previous/mock-create-queue-creating.png",
       "source": "local_mock_widget_test",
       "scope": "Local UI only; no Firebase",
       "width": 780,
       "height": 1768,
-      "sha256": "af7e88669bf10c015a615685a23b58b5e7965abf53edc8dabd425248d1a5d442"
+      "sha256": "af7e88669bf10c015a615685a23b58b5e7965abf53edc8dabd425248d1a5d442",
+      "original_file": "provider_screenshots/mock-create-queue-creating.png",
+      "collection": "previous"
     },
     {
-      "file": "provider_screenshots/mock-create-queue-error.png",
+      "file": "provider_screenshots/previous/mock-create-queue-error.png",
       "source": "local_mock_widget_test",
       "scope": "Local UI only; no Firebase",
       "width": 780,
       "height": 1768,
-      "sha256": "c234305875ced4ec444554c83cfd2c12ffc5e37d05db314780c9204ccc06d85e"
+      "sha256": "c234305875ced4ec444554c83cfd2c12ffc5e37d05db314780c9204ccc06d85e",
+      "original_file": "provider_screenshots/mock-create-queue-error.png",
+      "collection": "previous"
     },
     {
-      "file": "provider_screenshots/mock-create-queue-form.png",
+      "file": "provider_screenshots/previous/mock-create-queue-form.png",
       "source": "local_mock_widget_test",
       "scope": "Local UI only; no Firebase",
       "width": 780,
       "height": 1768,
-      "sha256": "948fbb0838091241e07a758d79b907ebd92d52a57325f0185214b627f35e176e"
+      "sha256": "948fbb0838091241e07a758d79b907ebd92d52a57325f0185214b627f35e176e",
+      "original_file": "provider_screenshots/mock-create-queue-form.png",
+      "collection": "previous"
     },
     {
-      "file": "provider_screenshots/mock-create-queue-success.png",
+      "file": "provider_screenshots/previous/mock-create-queue-success.png",
       "source": "local_mock_widget_test",
       "scope": "Local UI only; no Firebase",
       "width": 780,
       "height": 1768,
-      "sha256": "f9b79313dca9ec6338e6797de6354f804037e4afbe6704901d73a9e8e9286877"
+      "sha256": "f9b79313dca9ec6338e6797de6354f804037e4afbe6704901d73a9e8e9286877",
+      "original_file": "provider_screenshots/mock-create-queue-success.png",
+      "collection": "previous"
     },
     {
-      "file": "provider_screenshots/mock-create-required-fields.png",
+      "file": "provider_screenshots/previous/mock-create-required-fields.png",
       "source": "local_mock_widget_test",
       "scope": "Local UI only; no Firebase",
       "width": 780,
       "height": 1768,
-      "sha256": "2afbdb114562745ab8cf2bebe00079b18be197bf5b269984c7b827b9d12963ec"
+      "sha256": "2afbdb114562745ab8cf2bebe00079b18be197bf5b269984c7b827b9d12963ec",
+      "original_file": "provider_screenshots/mock-create-required-fields.png",
+      "collection": "previous"
     },
     {
-      "file": "provider_screenshots/mock-customer-waiting-list.png",
+      "file": "provider_screenshots/previous/mock-customer-waiting-list.png",
       "source": "local_mock_widget_test",
       "scope": "Local UI only; no Firebase",
       "width": 780,
       "height": 1768,
-      "sha256": "12300f5fef0dbec47685529a40c2a525a966475d2aa5894ff09358308c24a1e5"
+      "sha256": "12300f5fef0dbec47685529a40c2a525a966475d2aa5894ff09358308c24a1e5",
+      "original_file": "provider_screenshots/mock-customer-waiting-list.png",
+      "collection": "previous"
     },
     {
-      "file": "provider_screenshots/mock-dashboard-active.png",
+      "file": "provider_screenshots/previous/mock-dashboard-active.png",
       "source": "local_mock_widget_test",
       "scope": "Local UI only; no Firebase",
       "width": 780,
       "height": 1768,
-      "sha256": "c8ea0cef58372de6d3d7bdd9c1151142a3ff688f006b585c0f6aa4e7f0cced54"
+      "sha256": "c8ea0cef58372de6d3d7bdd9c1151142a3ff688f006b585c0f6aa4e7f0cced54",
+      "original_file": "provider_screenshots/mock-dashboard-active.png",
+      "collection": "previous"
     },
     {
-      "file": "provider_screenshots/mock-dashboard-empty.png",
+      "file": "provider_screenshots/previous/mock-dashboard-empty.png",
       "source": "local_mock_widget_test",
       "scope": "Local UI only; no Firebase",
       "width": 780,
       "height": 1768,
-      "sha256": "a3977f2be17b21a333729e521d22c6d204aab8665300db539d7bf3601ea2ce0c"
+      "sha256": "a3977f2be17b21a333729e521d22c6d204aab8665300db539d7bf3601ea2ce0c",
+      "original_file": "provider_screenshots/mock-dashboard-empty.png",
+      "collection": "previous"
     },
     {
-      "file": "provider_screenshots/mock-dashboard-error.png",
+      "file": "provider_screenshots/previous/mock-dashboard-error.png",
       "source": "local_mock_widget_test",
       "scope": "Local UI only; no Firebase",
       "width": 780,
       "height": 1768,
-      "sha256": "cdbb33f23635aa72e96a43755b8c0731deafbbb68f2815a9d82fcbe0f81930b6"
+      "sha256": "cdbb33f23635aa72e96a43755b8c0731deafbbb68f2815a9d82fcbe0f81930b6",
+      "original_file": "provider_screenshots/mock-dashboard-error.png",
+      "collection": "previous"
     },
     {
-      "file": "provider_screenshots/mock-dashboard-loading.png",
+      "file": "provider_screenshots/previous/mock-dashboard-loading.png",
       "source": "local_mock_widget_test",
       "scope": "Local UI only; no Firebase",
       "width": 780,
       "height": 1768,
-      "sha256": "d3f0ccff7a88f55a340dcd9110b4edb5dfc0d5f04a69bdb244d839491ba85666"
+      "sha256": "d3f0ccff7a88f55a340dcd9110b4edb5dfc0d5f04a69bdb244d839491ba85666",
+      "original_file": "provider_screenshots/mock-dashboard-loading.png",
+      "collection": "previous"
     },
     {
-      "file": "provider_screenshots/mock-dashboard-retry-recovered.png",
+      "file": "provider_screenshots/previous/mock-dashboard-retry-recovered.png",
       "source": "local_mock_widget_test",
       "scope": "Local UI only; no Firebase",
       "width": 780,
       "height": 1768,
-      "sha256": "a3977f2be17b21a333729e521d22c6d204aab8665300db539d7bf3601ea2ce0c"
+      "sha256": "a3977f2be17b21a333729e521d22c6d204aab8665300db539d7bf3601ea2ce0c",
+      "original_file": "provider_screenshots/mock-dashboard-retry-recovered.png",
+      "collection": "previous"
     },
     {
-      "file": "provider_screenshots/mock-duplicate-queue-prevented.png",
+      "file": "provider_screenshots/previous/mock-duplicate-queue-prevented.png",
       "source": "local_mock_widget_test",
       "scope": "Local UI only; no Firebase",
       "width": 780,
       "height": 1768,
-      "sha256": "1f2e2b0fb7254c3796a3f0d50ece53a6d28073ef3f5a0d5c193217ebf228c6d0"
+      "sha256": "1f2e2b0fb7254c3796a3f0d50ece53a6d28073ef3f5a0d5c193217ebf228c6d0",
+      "original_file": "provider_screenshots/mock-duplicate-queue-prevented.png",
+      "collection": "previous"
     },
     {
-      "file": "provider_screenshots/mock-management-empty.png",
+      "file": "provider_screenshots/previous/mock-management-empty.png",
       "source": "local_mock_widget_test",
       "scope": "Local UI only; no Firebase",
       "width": 780,
       "height": 1768,
-      "sha256": "7ea3dbca64fffd952cdf73b876962b3ed528a688951d34e60cb70f606700c877"
+      "sha256": "7ea3dbca64fffd952cdf73b876962b3ed528a688951d34e60cb70f606700c877",
+      "original_file": "provider_screenshots/mock-management-empty.png",
+      "collection": "previous"
     },
     {
-      "file": "provider_screenshots/mock-management-update-error.png",
+      "file": "provider_screenshots/previous/mock-management-update-error.png",
       "source": "local_mock_widget_test",
       "scope": "Local UI only; no Firebase",
       "width": 780,
       "height": 1768,
-      "sha256": "5c89596fa3d67e7da23b7cf833cd60338eac419c67bbeffcb18f0b2a5173bff6"
+      "sha256": "5c89596fa3d67e7da23b7cf833cd60338eac419c67bbeffcb18f0b2a5173bff6",
+      "original_file": "provider_screenshots/mock-management-update-error.png",
+      "collection": "previous"
     },
     {
-      "file": "provider_screenshots/mock-management-update-retry-recovered.png",
+      "file": "provider_screenshots/previous/mock-management-update-retry-recovered.png",
       "source": "local_mock_widget_test",
       "scope": "Local UI only; no Firebase",
       "width": 780,
       "height": 1768,
-      "sha256": "a2b65507bea15915bc70a7c9ad0577402286fbbf67619af2f03dcd8c0a8f0705"
+      "sha256": "a2b65507bea15915bc70a7c9ad0577402286fbbf67619af2f03dcd8c0a8f0705",
+      "original_file": "provider_screenshots/mock-management-update-retry-recovered.png",
+      "collection": "previous"
     },
     {
-      "file": "provider_screenshots/mock-served.png",
+      "file": "provider_screenshots/previous/mock-served.png",
       "source": "local_mock_widget_test",
       "scope": "Local UI only; no Firebase",
       "width": 780,
       "height": 1768,
-      "sha256": "5c6d38fb2743d71638c0e832f5f1611e3af17a1559582b10c6366f8a931a7c37"
+      "sha256": "5c6d38fb2743d71638c0e832f5f1611e3af17a1559582b10c6366f8a931a7c37",
+      "original_file": "provider_screenshots/mock-served.png",
+      "collection": "previous"
     },
     {
-      "file": "provider_screenshots/mock-skipped.png",
+      "file": "provider_screenshots/previous/mock-skipped.png",
       "source": "local_mock_widget_test",
       "scope": "Local UI only; no Firebase",
       "width": 780,
       "height": 1768,
-      "sha256": "d3a0b566368a3cf9647259ce46393b4f44797d7c0946ab35b29d04dec5d2822c"
+      "sha256": "d3a0b566368a3cf9647259ce46393b4f44797d7c0946ab35b29d04dec5d2822c",
+      "original_file": "provider_screenshots/mock-skipped.png",
+      "collection": "previous"
+    },
+    {
+      "file": "provider_screenshots/final/live-provider-queue-management.png",
+      "source": "live_chrome_existing_firebase_configuration",
+      "verification_date": "2026-11-20",
+      "revision": "badb5bc with uncommitted Provider improvements on omar",
+      "scope": "Current Provider queue management after an offline Call Next resumed online; newly registered isolated accounts and queue only. Genuine web capture, not native Android or a mock.",
+      "width": 430,
+      "height": 932,
+      "sha256": "cb79138a4cdc2201ce8a2534e71518c035788a9a5fc90647397c44ddc33e750c",
+      "original_file": "provider_screenshots/live-provider-queue-management.png",
+      "collection": "final"
+    },
+    {
+      "file": "provider_screenshots/previous/mock-android-create-queue.png",
+      "source": "native_android_emulator_in_memory_fixture",
+      "verification_date": "2026-11-20",
+      "revision": "badb5bc with uncommitted Provider improvements on omar",
+      "scope": "Create Queue form with keyboard dismissed. Genuine Android 14 API 34 ARM64 emulator framebuffer capture of the existing application widget/screens using in-memory repositories. Visible SIMULATED DATA / NO FIREBASE banner. Not live Android Firebase or TalkBack verification.",
+      "width": 1080,
+      "height": 2220,
+      "sha256": "2812af7667e6da21c094528fd4f6699c2311ab0bc6f4e739b184dff1235cf7d9",
+      "original_file": "provider_screenshots/mock-android-create-queue.png",
+      "collection": "previous",
+      "archive_reason": "Original labeled capture of the final implementation, preserved unchanged for audit; superseded for report presentation by a fresh full-frame capture without the fixture overlay. This archive move does not change its implementation provenance.",
+      "superseded_by": "provider_screenshots/final/simulated-android-create-queue.png"
+    },
+    {
+      "file": "provider_screenshots/previous/mock-android-provider-dashboard.png",
+      "source": "native_android_emulator_in_memory_fixture",
+      "verification_date": "2026-11-20",
+      "revision": "badb5bc with uncommitted Provider improvements on omar",
+      "scope": "Provider Dashboard with a locally created queue. Genuine Android 14 API 34 ARM64 emulator framebuffer capture of the existing application widget/screens using in-memory repositories. Visible SIMULATED DATA / NO FIREBASE banner. Not live Android Firebase or TalkBack verification.",
+      "width": 1080,
+      "height": 2220,
+      "sha256": "a4e4e5709fc7c9b6b9c45dbddc8342a5fc8c8a5479392acb960cca0fe4f1e194",
+      "original_file": "provider_screenshots/mock-android-provider-dashboard.png",
+      "collection": "previous",
+      "archive_reason": "Original labeled capture of the final implementation, preserved unchanged for audit; superseded for report presentation by a fresh full-frame capture without the fixture overlay. This archive move does not change its implementation provenance.",
+      "superseded_by": "provider_screenshots/final/simulated-android-provider-dashboard.png"
+    },
+    {
+      "file": "provider_screenshots/previous/mock-android-queue-management.png",
+      "source": "native_android_emulator_in_memory_fixture",
+      "verification_date": "2026-11-20",
+      "revision": "badb5bc with uncommitted Provider improvements on omar",
+      "scope": "Queue Management with 100 local fixture entries and the first customer called. Genuine Android 14 API 34 ARM64 emulator framebuffer capture of the existing application widget/screens using in-memory repositories. Visible SIMULATED DATA / NO FIREBASE banner. Not live Android Firebase or TalkBack verification.",
+      "width": 1080,
+      "height": 2220,
+      "sha256": "51fc83e7ee61c46399493a106812b1dfab39bb235d719dac4d17a1657e1fadee",
+      "original_file": "provider_screenshots/mock-android-queue-management.png",
+      "collection": "previous",
+      "archive_reason": "Original labeled capture of the final implementation, preserved unchanged for audit; superseded for report presentation by a fresh full-frame capture without the fixture overlay. This archive move does not change its implementation provenance.",
+      "superseded_by": "provider_screenshots/final/simulated-android-queue-management.png"
+    },
+    {
+      "file": "provider_screenshots/final/simulated-android-provider-dashboard.png",
+      "source": "native_android_emulator_in_memory_fixture",
+      "verification_date": "2026-11-20",
+      "captured_at": "2026-11-20T01:51:49+03:00",
+      "revision": "badb5bc with uncommitted Provider improvements on omar",
+      "scope": "Provider Dashboard showing the locally created Campus Barber queue, zero waiting customers and no called customer. Genuine native Android application capture with simulated in-memory data; no Firebase initialization, live Firebase acceptance or TalkBack verification.",
+      "data_label": "SIMULATED ANDROID DATA — NOT LIVE FIREBASE",
+      "runtime_mode": "Flutter profile; Android 14 API 34 ARM64; density 440; default text scale",
+      "capture_method": "adb exec-out screencap -p; full 1080x2220 framebuffer, including native status bar and navigation bar. Temporary ignored entry point launched the existing QueueLessApp and AppProviders with existing in-memory repositories and no test overlay. Fixture customers were seeded through a local Dart service extension; Call Next used the real Provider UI action.",
+      "image_processing": "None: no cropping, resizing, retouching, compositing or generated pixels.",
+      "test_overlay_present": false,
+      "firebase_initialized": false,
+      "audit_reference": "provider_screenshots/previous/mock-android-provider-dashboard.png",
+      "width": 1080,
+      "height": 2220,
+      "sha256": "61cf3aedae43272065d3dca7d3bafcd35ab13eec2478f47a43c22a57f1e2d34b",
+      "collection": "final"
+    },
+    {
+      "file": "provider_screenshots/final/simulated-android-create-queue.png",
+      "source": "native_android_emulator_in_memory_fixture",
+      "verification_date": "2026-11-20",
+      "captured_at": "2026-11-20T01:51:47+03:00",
+      "revision": "badb5bc with uncommitted Provider improvements on omar",
+      "scope": "Create Queue form showing Campus Barber, Barber service and five minutes before submission, with the keyboard dismissed. Genuine native Android application capture with simulated in-memory data; no Firebase initialization, live Firebase acceptance or TalkBack verification.",
+      "data_label": "SIMULATED ANDROID DATA — NOT LIVE FIREBASE",
+      "runtime_mode": "Flutter profile; Android 14 API 34 ARM64; density 440; default text scale",
+      "capture_method": "adb exec-out screencap -p; full 1080x2220 framebuffer, including native status bar and navigation bar. Temporary ignored entry point launched the existing QueueLessApp and AppProviders with existing in-memory repositories and no test overlay. Fixture customers were seeded through a local Dart service extension; Call Next used the real Provider UI action.",
+      "image_processing": "None: no cropping, resizing, retouching, compositing or generated pixels.",
+      "test_overlay_present": false,
+      "firebase_initialized": false,
+      "audit_reference": "provider_screenshots/previous/mock-android-create-queue.png",
+      "width": 1080,
+      "height": 2220,
+      "sha256": "acdb80c2dca3a360feeb21ce0c96449dcbf5f8fd91005612de3cabee949f3441",
+      "collection": "final"
+    },
+    {
+      "file": "provider_screenshots/final/simulated-android-queue-management.png",
+      "source": "native_android_emulator_in_memory_fixture",
+      "verification_date": "2026-11-20",
+      "captured_at": "2026-11-20T01:52:10+03:00",
+      "revision": "badb5bc with uncommitted Provider improvements on omar",
+      "scope": "Queue Management after Call Next: ticket 01 Ahmed Ali called, 99 waiting customers, ticket 02 Sara Hassan first waiting, and Call Next disabled above the lazy waiting list. Genuine native Android application capture with simulated in-memory data; no Firebase initialization, live Firebase acceptance or TalkBack verification.",
+      "data_label": "SIMULATED ANDROID DATA — NOT LIVE FIREBASE",
+      "runtime_mode": "Flutter profile; Android 14 API 34 ARM64; density 440; default text scale",
+      "capture_method": "adb exec-out screencap -p; full 1080x2220 framebuffer, including native status bar and navigation bar. Temporary ignored entry point launched the existing QueueLessApp and AppProviders with existing in-memory repositories and no test overlay. Fixture customers were seeded through a local Dart service extension; Call Next used the real Provider UI action.",
+      "image_processing": "None: no cropping, resizing, retouching, compositing or generated pixels.",
+      "test_overlay_present": false,
+      "firebase_initialized": false,
+      "audit_reference": "provider_screenshots/previous/mock-android-queue-management.png",
+      "width": 1080,
+      "height": 2220,
+      "sha256": "7edd25b85f14db344b1c039fd97be88238475716dfc3a54a0b265895fe196dbe",
+      "collection": "final"
     }
   ],
   "evidence_root": "docs/evidence",
   "path_resolution": "file and live_results paths are relative to this manifest directory",
-  "report": "../provider_report.md"
+  "report": "../provider_testing.md",
+  "additional_verification_dates": [
+    "2026-11-20"
+  ],
+  "verification_metadata_scope": "Top-level verification_date and tested_commit describe the original historical verification. Current captures retain their own verification_date and revision. Organization does not change capture dates, revisions, filenames or image bytes.",
+  "classification_policy": "final contains current Provider implementation report captures, with live versus simulated provenance recorded per image. previous preserves historical evidence and superseded original banner-labeled final-implementation captures for audit. Moving or selecting an image does not establish final implementation provenance.",
+  "collections": {
+    "final": {
+      "directory": "provider_screenshots/final/",
+      "count": 4,
+      "live_firebase_count": 1,
+      "simulated_data_count": 3,
+      "main_screens": [
+        {
+          "screen": "Provider Dashboard",
+          "file": "provider_screenshots/final/simulated-android-provider-dashboard.png"
+        },
+        {
+          "screen": "Create Queue",
+          "file": "provider_screenshots/final/simulated-android-create-queue.png"
+        },
+        {
+          "screen": "Queue Management",
+          "file": "provider_screenshots/final/simulated-android-queue-management.png"
+        }
+      ]
+    },
+    "previous": {
+      "directory": "provider_screenshots/previous/",
+      "count": 44,
+      "live_firebase_count": 22,
+      "simulated_data_count": 22,
+      "scope": "41 historical captures plus three original banner-labeled native Android captures of the final implementation, preserved byte-for-byte for audit."
+    }
+  }
 }

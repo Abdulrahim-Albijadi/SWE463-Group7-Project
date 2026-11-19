@@ -3,6 +3,8 @@
 // flutter test test/provider_evidence_test.dart --reporter expanded
 // Optional image capture (writes to build/provider_screenshots):
 // flutter test test/provider_evidence_test.dart --dart-define=CAPTURE_PROVIDER_SCREENSHOTS=true --reporter expanded
+// Native UI verification with a visible simulated-data banner:
+// flutter run -d emulator-5554 -t test/provider_evidence_test.dart --dart-define=ANDROID_PROVIDER_PREVIEW=true
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
@@ -216,7 +218,30 @@ Future<void> _fill(WidgetTester tester, {String minutes = '5'}) async {
   await tester.enterText(find.byKey(const ValueKey('queue-minutes')), minutes);
 }
 
-void main() {
+Future<void> main() async {
+  if (const bool.fromEnvironment('ANDROID_PROVIDER_PREVIEW')) {
+    WidgetsFlutterBinding.ensureInitialized();
+    final repository = QueueRepository(seedSampleData: false);
+    runApp(
+      AppProviders(
+        authRepository: AuthRepository(),
+        queueRepository: repository,
+        child: Directionality(
+          textDirection: TextDirection.ltr,
+          child: SafeArea(
+            bottom: false,
+            child: Column(
+              children: [
+                _AndroidFixtureControls(repository: repository),
+                const Expanded(child: QueueLessApp()),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+    return;
+  }
   TestWidgetsFlutterBinding.ensureInitialized();
   setUpAll(() async {
     if (_captureScreenshots) {
@@ -405,4 +430,99 @@ void main() {
     expect(find.text('#09 Ahmed Ali — Served'), findsOneWidget);
     await _shot(tester, 'management-update-retry-recovered');
   });
+}
+
+// Test tooling only: uses the existing in-memory repositories and the actual
+// application widget, theme, routes and Provider screens. Never starts Firebase.
+class _AndroidFixtureControls extends StatefulWidget {
+  const _AndroidFixtureControls({required this.repository});
+  final QueueRepository repository;
+
+  @override
+  State<_AndroidFixtureControls> createState() =>
+      _AndroidFixtureControlsState();
+}
+
+class _AndroidFixtureControlsState extends State<_AndroidFixtureControls> {
+  bool _adding = false;
+  bool _added = false;
+
+  Future<void> _addCustomers() async {
+    if (_adding || _added) return;
+    setState(() => _adding = true);
+    final queue = await widget.repository
+        .watchQueueOfProvider('provider-1')
+        .first;
+    if (queue != null) {
+      for (var index = 1; index <= 100; index++) {
+        await widget.repository.join(
+          customer: AppUser(
+            id: 'android-fixture-$index',
+            name: index == 1
+                ? 'Customer 001 with a long display name'
+                : 'Customer ${index.toString().padLeft(3, '0')}',
+            email: 'fixture$index@example.com',
+            role: UserRole.customer,
+          ),
+          queueId: queue.id,
+        );
+      }
+    }
+    if (!mounted) return;
+    setState(() {
+      _adding = false;
+      _added = queue != null;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) => ColoredBox(
+    color: const Color(0xFFFFE6B6),
+    child: SizedBox(
+      height: 48,
+      child: Row(
+        children: [
+          const Expanded(
+            child: Text(
+              'SIMULATED DATA · NO FIREBASE',
+              textAlign: TextAlign.center,
+              textScaler: TextScaler.noScaling,
+              style: TextStyle(
+                fontSize: 11,
+                color: Color(0xFF654000),
+                decoration: TextDecoration.none,
+              ),
+            ),
+          ),
+          Semantics(
+            button: true,
+            enabled: !_adding && !_added,
+            label: 'Add 100 test customers after creating a queue',
+            child: GestureDetector(
+              onTap: _adding || _added ? null : _addCustomers,
+              child: SizedBox(
+                width: 88,
+                height: 48,
+                child: Center(
+                  child: Text(
+                    _added
+                        ? '100 added'
+                        : _adding
+                        ? 'Adding…'
+                        : 'Add 100',
+                    textScaler: TextScaler.noScaling,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: Color(0xFF654000),
+                      decoration: TextDecoration.none,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
 }

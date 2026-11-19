@@ -19,6 +19,9 @@ class _CreateQueueScreenState extends State<CreateQueueScreen> {
   final _name = TextEditingController();
   final _description = TextEditingController();
   final _minutes = TextEditingController(text: '5');
+  final _nameFocus = FocusNode(debugLabel: 'Queue name');
+  final _descriptionFocus = FocusNode(debugLabel: 'Queue description');
+  final _minutesFocus = FocusNode(debugLabel: 'Service duration');
   bool _submitted = false;
   bool _creating = false;
   bool _created = false;
@@ -29,31 +32,50 @@ class _CreateQueueScreenState extends State<CreateQueueScreen> {
     _name.dispose();
     _description.dispose();
     _minutes.dispose();
+    _nameFocus.dispose();
+    _descriptionFocus.dispose();
+    _minutesFocus.dispose();
     super.dispose();
   }
 
   Future<void> _create() async {
     final state = context.read<ProviderQueueProvider>();
+    final userId = context.read<AuthProvider>().currentUser?.id;
     if (_creating ||
         _created ||
+        userId == null ||
+        ProviderPendingWrite.current(state, userId) != null ||
         state.isBusy ||
         state.status != LoadStatus.ready ||
         state.queue != null) {
       return;
     }
     setState(() => _submitted = true);
-    if (!_form.currentState!.validate()) return;
+    if (!_form.currentState!.validate()) {
+      final firstInvalid = _name.text.trim().isEmpty
+          ? _nameFocus
+          : _description.text.trim().isEmpty
+          ? _descriptionFocus
+          : _minutesFocus;
+      firstInvalid.requestFocus();
+      return;
+    }
     FocusManager.instance.primaryFocus?.unfocus();
-    final userId = context.read<AuthProvider>().currentUser?.id;
     setState(() {
       _creating = true;
       _failure = null;
     });
+    final pending = ProviderPendingWrite.begin(
+      state,
+      userId: userId,
+      kind: ProviderWriteKind.create,
+    );
     final result = await state.createQueue(
       name: _name.text.trim(),
       description: _description.text.trim(),
       averageServiceMinutes: int.parse(_minutes.text.trim()),
     );
+    pending.complete(result);
     if (!mounted || context.read<AuthProvider>().currentUser?.id != userId) {
       return;
     }
@@ -67,14 +89,17 @@ class _CreateQueueScreenState extends State<CreateQueueScreen> {
   @override
   Widget build(BuildContext context) {
     final state = context.watch<ProviderQueueProvider>();
-    final busy = _creating || state.isBusy;
+    final pending = ProviderPendingWrite.current(
+      state,
+      context.watch<AuthProvider>().currentUser?.id,
+    );
+    final busy = _creating || state.isBusy || pending != null;
     final queue = state.queue;
     return ProviderPage(
       title: 'Create Queue',
       selected: 0,
       canManage: state.status == LoadStatus.ready && queue != null,
       back: true,
-      busy: busy,
       children: [
         if (_creating)
           _buildForm(busy: true)
@@ -87,9 +112,19 @@ class _CreateQueueScreenState extends State<CreateQueueScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                ProviderStatus(
-                  icon: Icons.task_alt,
-                  text: _created ? 'Queue created' : 'You already have a queue',
+                ProviderAnnouncement(
+                  key: const ValueKey('queue-creation-result'),
+                  message: _created
+                      ? queue == null
+                            ? 'Queue created. Your queue was saved. Waiting for the latest queue details.'
+                            : 'Queue created. ${queue.name} is ready. Customers can now join. Select Manage Queue to continue.'
+                      : 'You already have a queue. Select Manage Queue to manage your existing queue.',
+                  child: ProviderStatus(
+                    icon: Icons.task_alt,
+                    text: _created
+                        ? 'Queue created'
+                        : 'You already have a queue',
+                  ),
                 ),
                 const SizedBox(height: 20),
                 if (queue != null) ...[
@@ -112,24 +147,24 @@ class _CreateQueueScreenState extends State<CreateQueueScreen> {
                     style: providerCaption,
                   ),
                   const SizedBox(height: 12),
-                  const Center(child: CircularProgressIndicator()),
+                  const Center(
+                    child: CircularProgressIndicator(
+                      semanticsLabel: 'Waiting for queue details',
+                    ),
+                  ),
                 ],
                 const SizedBox(height: 20),
                 ProviderButton(
                   label: 'Manage Queue',
-                  onPressed: queue == null || busy
+                  onPressed: queue == null
                       ? null
-                      : () => Navigator.pushNamedAndRemoveUntil(
-                          context,
-                          '/manage-queue',
-                          (_) => false,
-                        ),
+                      : () => providerManageQueue(context),
                 ),
                 const SizedBox(height: 12),
                 ProviderButton(
                   label: 'Back to Dashboard',
                   outlined: true,
-                  onPressed: busy ? null : () => providerDashboard(context),
+                  onPressed: () => providerDashboard(context),
                 ),
               ],
             ),
@@ -157,6 +192,8 @@ class _CreateQueueScreenState extends State<CreateQueueScreen> {
           label: 'Queue name',
           fieldKey: 'queue-name',
           controller: _name,
+          focusNode: _nameFocus,
+          nextFocus: _descriptionFocus,
           hint: 'Enter queue name',
           enabled: !busy,
           validator: (value) => value == null || value.trim().isEmpty
@@ -168,6 +205,8 @@ class _CreateQueueScreenState extends State<CreateQueueScreen> {
           label: 'Description',
           fieldKey: 'queue-description',
           controller: _description,
+          focusNode: _descriptionFocus,
+          nextFocus: _minutesFocus,
           hint: 'Describe your service',
           enabled: !busy,
           validator: (value) => value == null || value.trim().isEmpty
@@ -179,6 +218,7 @@ class _CreateQueueScreenState extends State<CreateQueueScreen> {
           label: 'Average service duration',
           fieldKey: 'queue-minutes',
           controller: _minutes,
+          focusNode: _minutesFocus,
           hint: 'Enter duration',
           enabled: !busy,
           numeric: true,
@@ -237,9 +277,12 @@ class _CreateQueueScreenState extends State<CreateQueueScreen> {
         ),
         const SizedBox(height: 10),
         ProviderButton(
-          label: 'Cancel',
+          label: busy ? 'Back to Dashboard' : 'Cancel',
+          semanticsLabel: busy
+              ? 'Back to Dashboard'
+              : 'Cancel queue creation and return to Dashboard',
           outlined: true,
-          onPressed: busy ? null : () => providerDashboard(context),
+          onPressed: () => providerDashboard(context),
         ),
       ],
     ),
@@ -249,6 +292,8 @@ class _CreateQueueScreenState extends State<CreateQueueScreen> {
     required String label,
     required String fieldKey,
     required TextEditingController controller,
+    required FocusNode focusNode,
+    FocusNode? nextFocus,
     required String hint,
     required bool enabled,
     required FormFieldValidator<String> validator,
@@ -256,13 +301,16 @@ class _CreateQueueScreenState extends State<CreateQueueScreen> {
   }) => Column(
     crossAxisAlignment: CrossAxisAlignment.stretch,
     children: [
-      Text(label, style: const TextStyle(fontSize: 14)),
+      ExcludeSemantics(
+        child: Text(label, style: const TextStyle(fontSize: 14)),
+      ),
       const SizedBox(height: 6),
       Semantics(
-        label: label,
+        label: numeric ? '$label, in minutes' : label,
         child: TextFormField(
           key: ValueKey(fieldKey),
           controller: controller,
+          focusNode: focusNode,
           enabled: enabled,
           keyboardType: numeric ? TextInputType.number : TextInputType.text,
           textCapitalization: numeric
@@ -271,9 +319,12 @@ class _CreateQueueScreenState extends State<CreateQueueScreen> {
           textInputAction: numeric
               ? TextInputAction.done
               : TextInputAction.next,
-          onFieldSubmitted: numeric ? (_) => _create() : null,
+          onFieldSubmitted: numeric
+              ? (_) => _create()
+              : (_) => nextFocus?.requestFocus(),
           scrollPadding: const EdgeInsets.all(24),
           decoration: InputDecoration(
+            constraints: const BoxConstraints(minHeight: 48),
             hintText: hint,
             suffixText: numeric ? 'minutes' : null,
             filled: true,
@@ -282,9 +333,9 @@ class _CreateQueueScreenState extends State<CreateQueueScreen> {
               horizontal: 12,
               vertical: 12,
             ),
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
             enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(12),
               borderSide: const BorderSide(color: Color(0xFF9DA3A8)),
             ),
             errorMaxLines: 3,
