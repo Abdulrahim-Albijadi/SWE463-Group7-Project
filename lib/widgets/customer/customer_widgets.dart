@@ -29,55 +29,61 @@ class CustomerPage extends StatelessWidget {
   final String? profileName;
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-    backgroundColor: _background,
-    appBar: AppBar(
-      title: Text(title),
-      centerTitle: true,
-      automaticallyImplyLeading: false,
+  Widget build(BuildContext context) => PopScope(
+    canPop: !back,
+    onPopInvokedWithResult: (didPop, _) {
+      if (!didPop && back) customerHome(context);
+    },
+    child: Scaffold(
       backgroundColor: _background,
-      surfaceTintColor: Colors.transparent,
-      leading: back
-          ? IconButton(
-              tooltip: 'Back to Home',
-              icon: const Icon(Icons.arrow_back),
-              onPressed: () => customerHome(context),
-            )
-          : null,
-      actions: profileName == null
-          ? null
-          : [
-              IconButton(
-                tooltip: 'Profile',
-                onPressed: () => Navigator.pushNamed(context, '/profile'),
-                icon: CircleAvatar(
-                  radius: 16,
-                  backgroundColor: const Color(0xFFE0F2F1),
-                  child: Text(
-                    profileName!.trim().isEmpty
-                        ? 'C'
-                        : profileName!.trim().substring(0, 1).toUpperCase(),
-                    style: const TextStyle(
-                      fontSize: 14,
-                      color: customerTeal,
-                      fontWeight: FontWeight.w600,
+      appBar: AppBar(
+        title: Text(title),
+        centerTitle: true,
+        automaticallyImplyLeading: false,
+        backgroundColor: _background,
+        surfaceTintColor: Colors.transparent,
+        leading: back
+            ? IconButton(
+                tooltip: 'Back to Home',
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () => customerHome(context),
+              )
+            : null,
+        actions: profileName == null
+            ? null
+            : [
+                IconButton(
+                  tooltip: 'Profile',
+                  onPressed: () => Navigator.pushNamed(context, '/profile'),
+                  icon: CircleAvatar(
+                    radius: 16,
+                    backgroundColor: const Color(0xFFE0F2F1),
+                    child: Text(
+                      profileName!.trim().isEmpty
+                          ? 'C'
+                          : profileName!.trim().substring(0, 1).toUpperCase(),
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: customerTeal,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
                 ),
-              ),
-              const SizedBox(width: 8),
-            ],
-    ),
-    body: Center(
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 480),
-        child: ListView(
-          padding: const EdgeInsets.fromLTRB(24, 32, 24, 24),
-          children: children,
+                const SizedBox(width: 8),
+              ],
+      ),
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 480),
+          child: ListView(
+            padding: const EdgeInsets.fromLTRB(24, 32, 24, 24),
+            children: children,
+          ),
         ),
       ),
+      bottomNavigationBar: _CustomerNavigation(selected: selected),
     ),
-    bottomNavigationBar: _CustomerNavigation(selected: selected),
   );
 }
 
@@ -175,20 +181,20 @@ class ServiceHeader extends StatelessWidget {
                 queue.description,
                 style: const TextStyle(fontSize: 14, color: _ink),
               ),
+              if (showOpen) ...[
+                const SizedBox(height: 8),
+                Text(
+                  queue.isOpen ? 'Open' : 'Closed',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: queue.isOpen ? customerTeal : customerMuted,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
             ],
           ),
         ),
-        if (showOpen) ...[
-          const SizedBox(width: 8),
-          Text(
-            queue.isOpen ? '● Open' : 'Closed',
-            style: const TextStyle(
-              fontSize: 14,
-              color: customerTeal,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ],
       ],
     );
   }
@@ -203,9 +209,13 @@ class Stats extends StatelessWidget {
     required this.label2,
     this.color = const Color(0xFFF0FDFA),
   });
+
   final String value1, label1, value2, label2;
   final Color color;
-  Widget _tile(String value, String label) => Expanded(
+
+  Widget _tile(String value, String label) => Semantics(
+    label: '$label: $value',
+    excludeSemantics: true,
     child: Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
       decoration: BoxDecoration(
@@ -238,14 +248,34 @@ class Stats extends StatelessWidget {
       ),
     ),
   );
+
   @override
-  Widget build(BuildContext context) => Row(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      _tile(value1, label1),
-      const SizedBox(width: 12),
-      _tile(value2, label2),
-    ],
+  Widget build(BuildContext context) => LayoutBuilder(
+    builder: (context, constraints) {
+      final stack =
+          constraints.maxWidth < 240 ||
+          MediaQuery.textScalerOf(context).scale(14) > 21;
+
+      if (stack) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            _tile(value1, label1),
+            const SizedBox(height: 12),
+            _tile(value2, label2),
+          ],
+        );
+      }
+
+      return Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(child: _tile(value1, label1)),
+          const SizedBox(width: 12),
+          Expanded(child: _tile(value2, label2)),
+        ],
+      );
+    },
   );
 }
 
@@ -391,7 +421,8 @@ class _CustomerNavigation extends StatelessWidget {
     child: NavigationBar(
       selectedIndex: selected,
       onDestinationSelected: (index) {
-        if (index == selected) return;
+        final destination = index == 0 ? '/customer' : '/my-queue';
+        if (ModalRoute.of(context)?.settings.name == destination) return;
         Navigator.pushNamedAndRemoveUntil(
           context,
           index == 0 ? '/customer' : '/my-queue',

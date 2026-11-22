@@ -5,11 +5,23 @@ import '../../providers/membership_provider.dart';
 import '../../providers/provider_support.dart';
 import '../../models/queue_data.dart';
 import '../../widgets/customer/customer_widgets.dart';
+import '../../providers/auth_provider.dart';
 
 class MyQueueScreen extends StatelessWidget {
   const MyQueueScreen({super.key});
 
   Future<void> _leave(BuildContext context) async {
+    final membership = context.read<MembershipProvider>();
+    final userId = context.read<AuthProvider>().currentUser?.id;
+    final entryId = membership.currentEntry?.id;
+    final route = ModalRoute.of(context);
+
+    if (userId == null ||
+        !membership.isWaiting ||
+        membership.isJoining ||
+        membership.isLeaving) {
+      return;
+    }
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
@@ -35,10 +47,29 @@ class MyQueueScreen extends StatelessWidget {
     );
     if (confirmed != true || !context.mounted) return;
 
-    final membership = context.read<MembershipProvider>();
+    if (route?.isCurrent != true ||
+        context.read<AuthProvider>().currentUser?.id != userId) {
+      return;
+    }
+
+    if (membership.currentEntry?.id != entryId || !membership.isWaiting) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Your ticket has changed. Review its status before leaving.',
+          ),
+        ),
+      );
+      return;
+    }
+
     final result = await membership.leave();
 
-    if (!context.mounted) return;
+    if (!context.mounted ||
+        route?.isCurrent != true ||
+        context.read<AuthProvider>().currentUser?.id != userId) {
+      return;
+    }
 
     if (!result.isOk) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -158,33 +189,36 @@ class MyQueueScreen extends StatelessWidget {
       selected: 1,
       back: true,
       children: [
-        Row(
+        Wrap(
+          spacing: 12,
+          runSpacing: 8,
+          crossAxisAlignment: WrapCrossAlignment.center,
           children: [
-            Expanded(
-              child: SectionTitle(
-                ticket == null ? 'No Active Queue' : 'Your Ticket',
+            SectionTitle(ticket == null ? 'No Active Queue' : 'Your Ticket'),
+            if (ticket != null)
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    status == MembershipStatus.served
+                        ? Icons.check
+                        : skipped
+                        ? Icons.priority_high
+                        : Icons.circle,
+                    size: status == MembershipStatus.served || skipped ? 16 : 7,
+                    color: waiting ? customerAmber : accent,
+                  ),
+                  const SizedBox(width: 6),
+                  Text(
+                    statusLabel,
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: waiting ? customerAmber : accent,
+                    ),
+                  ),
+                ],
               ),
-            ),
-            if (ticket != null) ...[
-              Icon(
-                status == MembershipStatus.served
-                    ? Icons.check
-                    : skipped
-                    ? Icons.priority_high
-                    : Icons.circle,
-                size: status == MembershipStatus.served || skipped ? 16 : 7,
-                color: waiting ? customerAmber : accent,
-              ),
-              const SizedBox(width: 6),
-              Text(
-                statusLabel,
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  color: waiting ? customerAmber : accent,
-                ),
-              ),
-            ],
           ],
         ),
         const SizedBox(height: 24),
@@ -240,18 +274,31 @@ class MyQueueScreen extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 8),
-                      Text(
-                        '#${ticket.ticketNumber}',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 64,
-                          height: 1.15,
-                          fontWeight: FontWeight.w700,
-                          color: accent,
+                      Semantics(
+                        label: 'Ticket number ${ticket.ticketNumber}',
+                        excludeSemantics: true,
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(
+                            '#${ticket.ticketNumber}',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 64,
+                              height: 1.15,
+                              fontWeight: FontWeight.w700,
+                              color: accent,
+                            ),
+                          ),
                         ),
                       ),
                       const SizedBox(height: 24),
                       if (waiting) ...[
+                        Text(
+                          'Current position: ${membership.position ?? '...'}',
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(fontSize: 16, height: 1.4),
+                        ),
+                        const SizedBox(height: 12),
                         Stats(
                           value1:
                               membership.customersAhead?.toString() ?? '...',
