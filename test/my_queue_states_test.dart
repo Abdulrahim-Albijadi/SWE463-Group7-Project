@@ -246,4 +246,87 @@ void main() {
     expect(find.text('Leave Queue'), findsNothing);
     expect(repository.leaveRequests, 0);
   });
+
+  testWidgets('Leave confirmation preserves a replacement ticket', (
+    tester,
+  ) async {
+    final repository = ControlledMembershipRepository();
+    final membership = await showQueue(tester, repository);
+    final originalEntry = membership.currentEntry!;
+
+    await openLeaveDialog(tester);
+
+    final customer = AppUser(
+      id: originalEntry.customerId,
+      name: originalEntry.customerName,
+      email: 'customer@example.com',
+      role: UserRole.customer,
+    );
+
+    // Simulate leaving and rejoining from another session.
+    await repository.leave(customer: customer, entryId: originalEntry.id);
+    await repository.join(customer: customer, queueId: originalEntry.queueId);
+    await tester.pumpAndSettle();
+
+    final replacementId = membership.currentEntry!.id;
+    expect(replacementId, isNot(originalEntry.id));
+
+    final requestsBeforeConfirm = repository.leaveRequests;
+
+    await tester.tap(find.widgetWithText(TextButton, 'Leave Queue'));
+    await tester.pumpAndSettle();
+
+    expect(repository.leaveRequests, requestsBeforeConfirm);
+    expect(membership.currentEntry!.id, replacementId);
+    expect(membership.isWaiting, isTrue);
+    expect(
+      find.text('Your ticket has changed. Review its status before leaving.'),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('Waiting ticket shows its current position', (tester) async {
+    await showQueue(tester, ControlledMembershipRepository());
+
+    expect(find.text('#12'), findsOneWidget);
+    expect(find.text('Current position: 4'), findsOneWidget);
+  });
+
+  testWidgets('My Queue fits a narrow screen with large text', (tester) async {
+    await tester.binding.setSurfaceSize(const Size(280, 844));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+
+    final auth = AuthRepository();
+    await auth.signIn(email: 'customer@example.com', password: 'demopass');
+
+    await tester.pumpWidget(
+      AppProviders(
+        authRepository: auth,
+        queueRepository: QueueRepository(),
+        child: MaterialApp(
+          builder: (context, child) => MediaQuery(
+            data: MediaQuery.of(context)
+                .copyWith(textScaler: const TextScaler.linear(2)),
+            child: child!,
+          ),
+          home: const MyQueueScreen(),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('#12'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+
+    for (var step = 0; step < 20; step++) {
+      await tester.drag(find.byType(Scrollable).first, const Offset(0, -180));
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+    }
+
+    expect(
+      find.widgetWithText(OutlinedButton, 'Leave Queue').hitTestable(),
+      findsOneWidget,
+    );
+  });
 }

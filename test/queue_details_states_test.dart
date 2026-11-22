@@ -194,4 +194,37 @@ void main() {
     expect(find.text('Join Queue'), findsOneWidget);
     expect(find.text('Retry'), findsNothing);
   });
+
+  testWidgets('Delayed join does not replace another page', (tester) async {
+    final repository = ControlledQueueRepository();
+    final gate = Completer<OperationResult>();
+    repository.joinGate = gate;
+
+    final membership = await showDetails(tester, repository: repository);
+
+    await tapJoin(tester);
+    await tester.pump();
+
+    final context = tester.element(find.byType(QueueDetailsScreen));
+
+    unawaited(
+      Navigator.of(context).push<void>(
+        MaterialPageRoute<void>(
+          builder: (_) => const Scaffold(body: Text('Another page')),
+        ),
+      ),
+    );
+
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
+
+    gate.complete(OperationResult.ok);
+    await tester.pumpAndSettle();
+
+    expect(membership.hasActiveMembership, isTrue);
+    expect(find.text('Another page'), findsOneWidget);
+    expect(find.text('Ticket destination'), findsNothing);
+    expect(repository.joinRequests, 1);
+    expect(tester.takeException(), isNull);
+  });
 }

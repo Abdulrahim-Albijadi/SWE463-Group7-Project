@@ -5,15 +5,28 @@ import '../../providers/membership_provider.dart';
 import '../../providers/provider_support.dart';
 import '../../providers/queue_provider.dart';
 import '../../widgets/customer/customer_widgets.dart';
+import '../../providers/auth_provider.dart';
 
 class QueueDetailsScreen extends StatelessWidget {
   const QueueDetailsScreen({super.key});
 
   Future<void> _join(BuildContext context, String queueId) async {
     final membership = context.read<MembershipProvider>();
+    final userId = context.read<AuthProvider>().currentUser?.id;
+    final route = ModalRoute.of(context);
+
+    if (userId == null || membership.isJoining || membership.isLeaving) {
+      return;
+    }
+
     final result = await membership.join(queueId);
 
-    if (!context.mounted) return;
+    if (!context.mounted ||
+        route?.isCurrent != true ||
+        context.read<AuthProvider>().currentUser?.id != userId ||
+        context.read<QueueProvider>().selected?.queue.id != queueId) {
+      return;
+    }
 
     if (result.isOk) {
       Navigator.pushReplacementNamed(context, '/my-queue');
