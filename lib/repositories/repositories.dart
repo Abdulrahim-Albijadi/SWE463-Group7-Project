@@ -358,4 +358,14 @@ class AuthRepository {
     _current = null;
     _changes.add(null);
   }
+
+    // Notification tokens by user id.
+  // FirebaseAuthRepository saves them on the user's account instead.
+  final Map<String, String> _deviceTokens = {};
+
+  Future<void> saveDeviceToken(String userId, String token) async {
+    _deviceTokens[userId] = token;
+  }
+
+  String? deviceTokenOf(String userId) => _deviceTokens[userId];
 }
