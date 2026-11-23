@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
+import '../services/push_service.dart';
+import 'push_provider.dart';
 import '../repositories/repositories.dart';
 import 'auth_provider.dart';
 import 'membership_provider.dart';
@@ -14,10 +15,12 @@ class AppProviders extends StatelessWidget {
     super.key,
     required this.authRepository,
     required this.queueRepository,
+    this.pushService = const PushService(),
     required this.child,
   });
   final AuthRepository authRepository;
   final QueueRepository queueRepository;
+  final PushService pushService;// Where the device's push token comes from. The default does nothing.
   final Widget child;
 
   @override
@@ -42,6 +45,11 @@ class AppProviders extends StatelessWidget {
         create: (_) => ProviderQueueProvider(queueRepository),
         update: (_, auth, providerQueue) =>
             providerQueue!..bindUser(auth.currentUser),
+      ),
+      ChangeNotifierProxyProvider<AuthProvider, PushProvider>(
+        lazy: false,
+        create: (_) => PushProvider(pushService, authRepository),
+        update: (_, auth, push) => push!..bindUser(auth.currentUser),
       ),
     ],
     child: child,

@@ -1,6 +1,6 @@
 
 import 'dart:async';
-
+import 'services/firebase_push_service.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
@@ -26,6 +26,7 @@ Future<void> main() async {
     AppProviders(
       authRepository: FirebaseAuthRepository(),
       queueRepository: FirebaseQueueRepository(),
+      pushService: FirebasePushService(),
       child: const QueueLessApp(),
     ),
   );
