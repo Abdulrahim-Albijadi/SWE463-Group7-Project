@@ -238,7 +238,7 @@ class MembershipProvider extends ChangeNotifier with SafeNotifier {
       _announce(
         entry,
         NotificationType.nearTurn,
-        'Two customers are ahead of you.',
+        'Your turn is near.',
       );
     }
   }

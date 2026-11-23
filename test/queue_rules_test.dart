@@ -119,9 +119,14 @@ void main() {
       );
     });
 
-    test('is false with one or three ahead, or when called', () {
+    test('is true with one or none ahead', () {
       final waiting = entry(3, MembershipStatus.waiting);
-      expect(QueueRules.isNearTurn(entry: waiting, customersAhead: 1), isFalse);
+      expect(QueueRules.isNearTurn(entry: waiting, customersAhead: 1), isTrue);
+      expect(QueueRules.isNearTurn(entry: waiting, customersAhead: 0), isTrue);
+    });
+
+    test('is false with three ahead, or when called', () {
+      final waiting = entry(3, MembershipStatus.waiting);
       expect(QueueRules.isNearTurn(entry: waiting, customersAhead: 3), isFalse);
       expect(
         QueueRules.isNearTurn(

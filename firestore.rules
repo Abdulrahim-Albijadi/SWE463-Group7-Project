@@ -23,7 +23,15 @@ service cloud.firestore {
         && request.resource.data.name is string
         && request.resource.data.email == request.auth.token.email
         && request.resource.data.role in ['customer', 'provider'];
-      allow list, update, delete: if false;
+      allow list, delete: if false;
+
+      // A customer's device registers its notification token on its own
+      // profile. Nothing else on the profile can change.
+      allow update: if signedIn()
+        && request.auth.uid == userId
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['fcmToken'])
+        && (!('fcmToken' in request.resource.data)
+          || request.resource.data.fcmToken is string);
     }
 
     match /queues/{queueId} {

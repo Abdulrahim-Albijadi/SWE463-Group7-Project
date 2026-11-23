@@ -68,6 +68,7 @@ class QueueRules {
   const QueueRules._();
 
   // Near Turn is a display condition, not a membership status.
+  // It applies when 2 or fewer customers are ahead of a waiting customer.
   static const int nearTurnAhead = 2;
 
   // Waiting and called entries in joining order. Ticket numbers break ties.
@@ -116,7 +117,7 @@ class QueueRules {
     required int customersAhead,
   }) =>
       entry.status == MembershipStatus.waiting &&
-      customersAhead == nearTurnAhead;
+      customersAhead <= nearTurnAhead;
 
   // Tickets are fixed: finished and left entries still count.
   static int nextTicketNumber(Iterable<QueueEntry> queueEntries) =>
