@@ -18,9 +18,13 @@ import 'repositories/firebase_queue_repository.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  final options = DefaultFirebaseOptions.currentPlatform;
+  if (options.apiKey.isEmpty) {
+    throw StateError(
+      'Set the Firebase API key using --dart-define-from-file=firebase.local.json.',
+    );
+  }
+  await Firebase.initializeApp(options: options);
 
   runApp(
     AppProviders(
@@ -143,7 +147,27 @@ class _QueueLessAppState extends State<QueueLessApp> {
       ),
     ),
     initialRoute: '/login',
+    onGenerateInitialRoutes: (_) {
+      final role = context.read<AuthProvider>().currentUser?.role;
+      final route = switch (role) {
+        UserRole.customer => '/customer',
+        UserRole.provider => '/provider',
+        null => '/login',
+      };
+      return [_makeRoute(RouteSettings(name: route))];
+    },
     onGenerateRoute: _makeRoute,
+    builder: (context, navigator) {
+      final initializing = context.select<AuthProvider, bool>(
+        (auth) => auth.status == AuthStatus.initializing,
+      );
+      if (initializing) {
+        return const Scaffold(
+          body: Center(child: CircularProgressIndicator()),
+        );
+      }
+      return navigator!;
+    },
   );
 }
 
@@ -156,8 +180,8 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final _form = GlobalKey<FormState>();
-  final _email = TextEditingController(text: 'customer@example.com');
-  final _password = TextEditingController(text: 'demopass');
+  final _email = TextEditingController();
+  final _password = TextEditingController();
   bool showPassword = false;
 
   @override
@@ -250,12 +274,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 TextButton(
                   onPressed: () => Navigator.pushNamed(context, '/register'),
                   child: const Text('Create Account'),
-                ),
-                const SizedBox(height: 14),
-                const Text(
-                  'Test accounts: customer@example.com or '
-                  'provider@example.com, password demopass.',
-                  textAlign: TextAlign.center,
                 ),
               ],
             ),

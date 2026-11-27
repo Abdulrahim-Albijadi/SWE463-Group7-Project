@@ -176,6 +176,7 @@ Future<ProviderQueueProvider> _start(
     find.byType(TextFormField).first,
     'provider@example.com',
   );
+  await tester.enterText(find.byType(TextFormField).at(1), 'demopass');
   await _tap(tester, _filled('Sign In'));
   if (settle) {
     await tester.pumpAndSettle();

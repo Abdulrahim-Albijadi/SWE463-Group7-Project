@@ -50,8 +50,87 @@ service cloud.firestore {
         && request.resource.data.description is string
         && request.resource.data.averageServiceMinutes is int
         && request.resource.data.averageServiceMinutes > 0
-        && request.resource.data.isOpen == true;
+        && request.resource.data.isOpen == true
+        && getAfter(counterPath(queueId)).data.lastTicket == 0;
       allow update, delete: if false;
+    }
+
+    function entryPath(entryId) {
+      return /databases/$(database)/documents/entries/$(entryId);
+    }
+    function membershipPath(customerId) {
+      return /databases/$(database)/documents/customerMemberships/$(customerId);
+    }
+    function counterPath(queueId) {
+      return /databases/$(database)/documents/queueTicketCounters/$(queueId);
+    }
+    function serviceStatePath(queueId) {
+      return /databases/$(database)/documents/queueServiceState/$(queueId);
+    }
+    function ownsQueue(queueId) {
+      return isProvider()
+        && get(/databases/$(database)/documents/queues/$(queueId)).data.providerId == request.auth.uid;
+    }
+    function createsOwnEntry(entryId) {
+      return entryId is string
+        && !exists(entryPath(entryId))
+        && getAfter(entryPath(entryId)).data.customerId == request.auth.uid;
+    }
+
+    match /customerMemberships/{customerId} {
+      function pointsToNewEntry() {
+        return isCustomer()
+          && customerId == request.auth.uid
+          && request.resource.data.keys().hasOnly(['entryId'])
+          && createsOwnEntry(request.resource.data.entryId);
+      }
+      allow get: if signedIn() && customerId == request.auth.uid;
+      allow create: if pointsToNewEntry();
+      allow update: if pointsToNewEntry()
+        && get(entryPath(resource.data.entryId)).data.status in ['left', 'served', 'skipped'];
+    }
+
+    match /queueTicketCounters/{queueId} {
+      function allocatesTicket() {
+        let entryId = request.resource.data.entryId;
+        return isCustomer()
+          && request.resource.data.keys().hasOnly(['lastTicket', 'entryId'])
+          && request.resource.data.lastTicket is int
+          && createsOwnEntry(entryId)
+          && getAfter(entryPath(entryId)).data.queueId == queueId
+          && getAfter(entryPath(entryId)).data.ticketNumber == request.resource.data.lastTicket;
+      }
+      allow get: if signedIn();
+      function initializesNewQueue() {
+        let queue = /databases/$(database)/documents/queues/$(queueId);
+        return isProvider()
+          && queueId == request.auth.uid
+          && !exists(queue)
+          && getAfter(queue).data.providerId == request.auth.uid
+          && request.resource.data.keys().hasOnly(['lastTicket'])
+          && request.resource.data.lastTicket == 0;
+      }
+      // Existing queues may need their first counter seeded from ticket history.
+      allow create: if initializesNewQueue()
+        || (allocatesTicket() && request.resource.data.lastTicket > 0);
+      allow update: if allocatesTicket()
+        && request.resource.data.lastTicket == resource.data.lastTicket + 1;
+    }
+
+    match /queueServiceState/{queueId} {
+      function callsWaitingEntry() {
+        let entryId = request.resource.data.entryId;
+        let entry = get(entryPath(entryId)).data;
+        return ownsQueue(queueId)
+          && request.resource.data.keys().hasOnly(['entryId'])
+          && entry.queueId == queueId
+          && entry.status == 'waiting'
+          && getAfter(entryPath(entryId)).data.status == 'called';
+      }
+      allow get: if ownsQueue(queueId);
+      allow create: if callsWaitingEntry();
+      allow update: if callsWaitingEntry()
+        && get(entryPath(resource.data.entryId)).data.status in ['served', 'skipped'];
     }
 
     match /entries/{entryId} {
@@ -74,6 +153,9 @@ service cloud.firestore {
         && get(/databases/$(database)/documents/queues/$(request.resource.data.queueId)).data.isOpen == true
         && request.resource.data.ticketNumber is int
         && request.resource.data.ticketNumber > 0
+        && getAfter(membershipPath(request.auth.uid)).data.entryId == entryId
+        && getAfter(counterPath(request.resource.data.queueId)).data.entryId == entryId
+        && getAfter(counterPath(request.resource.data.queueId)).data.lastTicket == request.resource.data.ticketNumber
         && request.resource.data.joinedAt is timestamp
         && request.resource.data.status == 'waiting';
 
@@ -84,9 +166,11 @@ service cloud.firestore {
             && resource.data.status == 'waiting'
             && request.resource.data.status == 'left')
           ||
-          (get(/databases/$(database)/documents/queues/$(resource.data.queueId)).data.providerId == request.auth.uid
+          (ownsQueue(resource.data.queueId)
             && (
-              (resource.data.status == 'waiting' && request.resource.data.status == 'called')
+              (resource.data.status == 'waiting'
+                && request.resource.data.status == 'called'
+                && getAfter(serviceStatePath(resource.data.queueId)).data.entryId == entryId)
               ||
               (resource.data.status == 'called'
                 && request.resource.data.status in ['served', 'skipped'])
