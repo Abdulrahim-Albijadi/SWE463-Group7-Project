@@ -1,10 +1,10 @@
 # QueueLess
 
-**SWE 463 — Group 7 | Phase 3: Working Flutter Prototype**
+**SWE 463 | Group 7 | Phase 4: Final Application — In Progress**
 
 QueueLess is a Flutter virtual queue application. Customers browse services, join or leave a queue, and track their ticket, customers ahead, estimated wait, and turn status. Providers create a queue, view waiting customers, call the next customer, and mark the called customer as served or skipped.
 
-The current application uses Firebase Authentication, Cloud Firestore, and Provider. Near-turn and called alerts work inside the application. Background push notifications are not implemented.
+The current application uses Firebase Authentication, Cloud Firestore, Provider, and Firebase Cloud Messaging. Near-turn and called alerts appear inside the application. Android background push delivery was verified using a local trusted Node.js sender while the Firebase project remained on Spark. The sender must stay running and connected; Cloud Functions have not been deployed. See [Local notification setup and verification](docs/local_notifications.md).
 
 ## Team
 
@@ -15,9 +15,9 @@ The current application uses Firebase Authentication, Cloud Firestore, and Provi
 | Bader Alshehri | 202178070 | Customer interface and navigation |
 | Bader Almutairi | 202159390 | Queue rules, waiting estimates, and notifications |
 
-These are assigned areas. The Phase 3 report must record each member's actual completed work with specific commits, issues, or pull requests.
+These are assigned areas. The Phase 4 report must record each member's actual completed work with specific commits, issues, or pull requests.
 
-## Phase 3 feature progress
+## Current feature progress
 
 | ID | Approved essential feature | Status | Current behavior |
 | --- | --- | --- | --- |
@@ -26,9 +26,9 @@ These are assigned areas. The Phase 3 report must record each member's actual co
 | F3 | Join and leave | Implemented | Browse queues, view details, join, leave with confirmation while waiting, and rejoin with a new ticket. |
 | F4 | Live queue tracking | Implemented | Firestore snapshot subscriptions update queue and membership data; screens display ticket and status information. Live updates between independent Chrome profiles are documented in [Provider verification](docs/provider_testing.md); simultaneous use on two physical devices remains unverified. |
 | F5 | Estimated waiting time | Implemented | Customers ahead multiplied by the provider's average service duration; the called customer counts as ahead. |
-| F6 | Queue notifications | In progress | Near-turn and called in-app banners/messages work. FCM device registration, a trusted sender, and background push delivery are not implemented. |
+| F6 | Queue notifications | Implemented with local sender | In-app alerts, FCM token registration, and a trusted local sender are implemented. Near-turn and called background notifications were verified on Android. Automatic sending requires the local process to remain running; hosted Cloud Functions are not deployed. |
 
-**Completion: 5 of 6 essential features implemented (approximately 83%); F6 is partial and is not counted as complete.** This feature count does not imply that every edge case has been verified.
+All six essential features have implementations. F6 currently depends on the documented local sender. This does not establish production readiness; concurrency checks and remaining release verification are still pending.
 
 QR joining, Queue History, Pause/Close Queue, and Basic Queue Statistics were excluded optional features in the approved Phase 2 scope. They are not claimed as implemented core features.
 
@@ -46,7 +46,7 @@ Provider flow: Login/Register → Provider Dashboard → Create Queue → Queue 
 
 ## State management and data
 
-`AppProviders` supplies `AuthProvider`, `QueueProvider`, `MembershipProvider`, and `ProviderQueueProvider`. Authentication changes bind the shared providers to the current user. Temporary form and interaction state uses local `setState` and controllers.
+`AppProviders` supplies `AuthProvider`, `QueueProvider`, `MembershipProvider`, `ProviderQueueProvider`, and `PushProvider`. Authentication changes bind providers to the current user. `PushProvider` handles customer notification permission and FCM token registration. Temporary form and interaction state uses local `setState` and controllers.
 
 `main.dart` initializes Firebase with `DefaultFirebaseOptions.currentPlatform` and injects `FirebaseAuthRepository` and `FirebaseQueueRepository`. The in-memory repositories remain available for isolated tests; normal application startup uses Firebase.
 
@@ -72,6 +72,7 @@ Passwords are handled by Firebase Authentication and are not written to the appl
 - Serving or skipping does not automatically call the next customer.
 - `estimatedWait = customersAhead × averageServiceMinutes`.
 - The currently called customer counts as ahead until served or skipped.
+- A waiting customer's turn is near when two or fewer active customers are ahead.
 
 ## Setup and run
 
@@ -122,7 +123,17 @@ Switching accounts on one device verifies persisted results across sessions. Oma
 
 ### Recorded validation
 
-Latest verification on **14 November 2026**, at main revision **`4d87822`** after PR #15:
+Verification on **27 November 2026**, using Flutter 3.47.9:
+
+- `flutter analyze`: no issues found.
+- `flutter test`: all **144 tests passed**.
+- `node --check functions/local_sender.js`: passed.
+- Notification logic tests: all **22 passed**.
+- Android customer and Chrome provider sessions verified near-turn and called background notifications for ticket #10, followed by Called and Served screen updates.
+- Delivery used the local sender with one configured queue and customer. Cloud Functions were not deployed.
+- See [Local notification setup and verification](docs/local_notifications.md) for commands, prerequisites, and limitations.
+
+Earlier verification on **14 November 2026**, at main revision **`4d87822`** after PR #15:
 
 - `flutter analyze`: no issues found.
 - `flutter test`: **all 81 tests passed**. This includes the existing 78 tests and three relocated Provider workflow tests; routine execution does not regenerate archived screenshots.
@@ -150,14 +161,14 @@ The inspected provider screens include loading and load-error states with Retry,
 
 ## Known issues and remaining work
 
-- **Push notifications:** no `firebase_messaging` or background push implementation is present. In-app messages do not provide notifications while the app is closed or in the background.
+- **Push notification hosting:** Android background delivery is verified with the local sender. It requires a running, connected laptop and is restricted to the configured test queue and customer. Always-on hosting, recovery after interruption, foreground system notifications, and notification-tap routing remain unverified.
 - **Concurrent ticket allocation:** the Firebase repository calculates ticket numbers client-side. Simultaneous joins may receive duplicate numbers; transactional allocation remains future work.
 - **Concurrency verification:** the single-active-membership and single-called-customer rules need review and testing under simultaneous requests. Current manual checks used sequential actions.
 - **Fresh setup:** a clean checkout at `7cdd0a0` ran successfully on the existing configured Android development machine. A completely new machine/signing key and a clean clone of the latest revision have not been verified; Firebase configuration and Android application restrictions must match that environment.
 - **Multiple devices/platforms:** live Firebase operation across independent Chrome profiles is documented in the archived Provider evidence. Simultaneous operation on two physical devices and native iOS/desktop builds remain unverified.
 - **Old demo text:** the Login screen still pre-fills and displays sample account credentials that are not guaranteed to exist in Firebase.
 - **Failure-path verification:** controlled network failures and all retry/validation variants have not been manually exercised in the recorded session.
-- **Submission evidence:** finalize the Phase 3 PDF, verify each member's contribution evidence, and create the `phase-3` tag only when the submitted revision is ready. This README does not claim the tag already exists.
+- **Submission evidence:** finalize the Phase 4 report and contribution evidence, complete release verification, and create the `final-submission` tag only when the final submitted revision is ready.
 
 ## Project structure
 
@@ -190,10 +201,11 @@ The inspected provider screens include loading and load-error states with Retry,
 | `firebase_core` | `^5.1.0` | Firebase initialization |
 | `firebase_auth` | `^7.0.1` | Email/password authentication |
 | `cloud_firestore` | `^7.1.0` | Stored profiles, queues, entries, and snapshot updates |
+| `firebase_messaging` | `^17.1.0` | FCM permission, device token registration, and push notification delivery |
 | `flutter_test` | SDK | Automated tests |
 | `flutter_lints` | `^6.0.0` | Static analysis rules |
 
-These are `pubspec.yaml` constraints; `pubspec.lock` records resolved versions. Firebase Messaging and Cloud Functions are planned, not current application dependencies.
+These are `pubspec.yaml` constraints; `pubspec.lock` records resolved versions. Server dependencies are declared separately in `functions/package.json`. Cloud Functions source is included, but deployment is pending; the verified Spark-compatible delivery path uses `functions/local_sender.js`.
 
 ## Links and references
 
@@ -203,11 +215,14 @@ These are `pubspec.yaml` constraints; `pubspec.lock` records resolved versions. 
 - [Provider package](https://pub.dev/packages/provider)
 - [Firebase Authentication](https://firebase.google.com/docs/auth)
 - [Cloud Firestore](https://firebase.google.com/docs/firestore)
-- [Firebase Cloud Messaging — planned work](https://firebase.google.com/docs/cloud-messaging)
-- [Cloud Functions Firestore triggers — planned work](https://firebase.google.com/docs/functions/firestore-events)
+- [Firebase Cloud Messaging](https://firebase.google.com/docs/cloud-messaging)
+- [Cloud Functions Firestore triggers — source included, not deployed](https://firebase.google.com/docs/functions/firestore-events)
+- [Local notification sender setup and verification](docs/local_notifications.md)
 
 ## Licenses and AI use
 
 Retain third-party notices and review the LICENSE files for the resolved package versions before distribution. The Phase 2 reference record identifies Flutter as BSD 3-Clause, Provider as MIT, Material Icons as Apache License 2.0, Firebase documentation content as CC BY 4.0 with code samples under Apache License 2.0, and Figma as subject to its terms of service. Documentation licenses do not replace package licenses or Firebase service terms.
 
 The team made the design and product decisions and is responsible for understanding and reviewing the submitted work. Figma AI and ChatGPT were used for some screen drafts, Flutter starter code examples, and suggestions. Claude was used to help structure the Phase 2 report and README and correct grammar. During Phase 3, ChatGPT assisted with debugging the customer smoke-test provider setup and Firebase profile-listener behavior, preparing the Provider loading/stream-recovery fix and nine regression tests, planning manual checks, and drafting this README and the Phase 3 report from supplied code and reported results. Each member must ensure this disclosure also covers any other AI assistance used in their contribution. AI assistance is not evidence of a member's authorship or completed work.
+
+During Phase 4, ChatGPT assisted with customer navigation and ticket-safety fixes, responsive layouts, regression tests, notification integration review, the local sender implementation, manual test guidance, and documentation. The team reviewed and applied the changes; validation results reflect the tests and device checks actually performed.

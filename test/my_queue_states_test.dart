@@ -292,6 +292,58 @@ void main() {
     expect(find.text('Current position: 4'), findsOneWidget);
   });
 
+  for (final ahead in [0, 1, 2, 3]) {
+    testWidgets('Near-turn notice with $ahead customers ahead', (tester) async {
+      final repository = ControlledMembershipRepository();
+      const provider = AppUser(
+        id: 'provider-1',
+        name: 'Campus Barber Owner',
+        email: 'provider@example.com',
+        role: UserRole.provider,
+      );
+
+      // The sample customer starts with three customers ahead.
+      final customersToServe = 3 - ahead;
+      for (var i = 0; i < customersToServe; i++) {
+        final served = await repository.finishCalled(
+          provider: provider,
+          queueId: 'campus-barber',
+          outcome: MembershipStatus.served,
+        );
+        expect(served.isOk, isTrue);
+
+        if (i < customersToServe - 1) {
+          final called = await repository.callNext(
+            provider: provider,
+            queueId: 'campus-barber',
+          );
+          expect(called.isOk, isTrue);
+        }
+      }
+
+      final membership = await showQueue(tester, repository);
+
+      expect(membership.isWaiting, isTrue);
+      expect(membership.customersAhead, ahead);
+
+      const nearMessage = 'Your turn is near. Please be ready.';
+      const waitingMessage = 'We’ll notify you when your turn is near.';
+      final expectedMessage = ahead <= 2 ? nearMessage : waitingMessage;
+      final unexpectedMessage = ahead <= 2 ? waitingMessage : nearMessage;
+
+      await tester.scrollUntilVisible(
+        find.text(expectedMessage),
+        120,
+        scrollable: find.byType(Scrollable).first,
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text(expectedMessage), findsOneWidget);
+      expect(find.text(unexpectedMessage), findsNothing);
+      expect(tester.takeException(), isNull);
+    });
+  }
+
   testWidgets('My Queue fits a narrow screen with large text', (tester) async {
     await tester.binding.setSurfaceSize(const Size(280, 844));
     addTearDown(() => tester.binding.setSurfaceSize(null));
