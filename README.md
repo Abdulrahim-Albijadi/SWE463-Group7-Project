@@ -28,7 +28,7 @@ These are assigned areas. The Phase 4 report must record each member's actual co
 | F5 | Estimated waiting time | Implemented | Customers ahead multiplied by the provider's average service duration; the called customer counts as ahead. |
 | F6 | Queue notifications | Implemented with local sender | In-app alerts, FCM token registration, and a trusted local sender are implemented. Near-turn and called background notifications were verified on Android. Automatic sending requires the local process to remain running; hosted Cloud Functions are not deployed. |
 
-All six essential features have implementations. F6 currently depends on the documented local sender. This does not establish production readiness; concurrency checks and remaining release verification are still pending.
+All six essential features have implementations. F6 currently depends on the documented local sender. The documented emulator concurrency checks passed; remaining release verification is listed below.
 
 QR joining, Queue History, Pause/Close Queue, and Basic Queue Statistics were excluded optional features in the approved Phase 2 scope. They are not claimed as implemented core features.
 
@@ -142,7 +142,20 @@ Switching accounts on one device verifies persisted results across sessions. Oma
 
 ### Recorded validation
 
-Verification on **27 November 2026**, using Flutter 3.47.9:
+Latest integration verification on **27 November 2026**, after backend update `42667d8`:
+
+- `flutter analyze`: no issues found.
+- Standard Flutter suite: **147 tests passed**.
+- Chrome queue-rule suite: **16 tests passed**.
+- Separate Firebase emulator integration scenario passed with exit code 0.
+- Updated Firestore rules were deployed successfully to `queueless-group7`.
+- Updated Android customer and Chrome provider sessions verified join, call, serve, skip, leave, rejoin, and live status updates.
+- Saved customer session restoration and called background notification delivery were verified on Android.
+- Browser tests required a documented local Flutter SDK correction for CanvasKit URL handling on Windows.
+- See [Backend and integration verification](docs/phase4_firebase_evidence.md#integration-verification--27-november-2026) for details and remaining release work.
+
+
+Earlier verification on **27 November 2026**, before backend update `42667d8`, using Flutter 3.47.9:
 
 - `flutter analyze`: no issues found.
 - `flutter test`: all **144 tests passed**.
@@ -172,7 +185,7 @@ Earlier checks on **13 November 2026**:
 
 Omar's original **12 November 2026** browser/Firebase evidence documents independent Customer/Provider sessions, live updates without refreshing, and queue/terminal-ticket persistence after reload and explicit sign-in. The later organization work and its logs are described in [Provider testing](docs/provider_testing.md). Historical failures remain in the archived logs; later passing results are recorded separately.
 
-These results apply to the stated revisions and environments. A clean clone of the latest revision, a completely new development machine, and automatic navigation into a restored session are not claimed. Rerun relevant checks after further code changes.
+These results apply to the stated revisions and environments. Saved customer session restoration was verified on the tested Android device. A clean checkout of the final revision and setup on a completely new development machine remain unverified. Rerun relevant checks after further code changes.
 
 ## Loading, empty, validation, and failure states
 
@@ -181,7 +194,7 @@ The inspected provider screens include loading and load-error states with Retry,
 ## Known issues and remaining work
 
 - **Push notification hosting:** Android background delivery is verified with the local sender. It requires a running, connected laptop and is restricted to the configured test queue and customer. Always-on hosting, recovery after interruption, foreground system notifications, and notification-tap routing remain unverified.
-- **Phase 4 rollout:** the updated app and Firestore rules must be released together. Existing entries remain readable. Each queue's first counter is seeded from its existing ticket numbers. Previously issued tickets keep their numbers.
+- **Phase 4 rollout:** updated Firestore rules were deployed on 27 November 2026 and the updated application passed the documented live workflow checks. Use the matching updated application; older clients do not perform the synchronized writes required by these rules. Release APK and final release verification remain pending.
 - **Fresh setup:** a clean checkout at `7cdd0a0` ran successfully on the existing configured Android development machine. A completely new machine/signing key and a clean clone of the latest revision have not been verified; Firebase configuration and Android application restrictions must match that environment.
 - **Multiple devices/platforms:** live Firebase operation across independent Chrome profiles is documented in the archived Provider evidence. Simultaneous operation on two physical devices and native iOS/desktop builds remain unverified.
 - **Failure-path verification:** controlled network failures and all retry/validation variants have not been manually exercised in the recorded session.

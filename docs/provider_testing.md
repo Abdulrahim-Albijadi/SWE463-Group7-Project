@@ -1,5 +1,11 @@
 # Provider functionality and verification
 
+## Post-backend integration update — 27 November 2026
+
+After backend update `42667d8` and production Firestore rules deployment, Bader Alshehri verified the updated Chrome provider against a physical Android customer session. Live joining, Call Next, Served, Skipped, leave/rejoin list updates, and called background notification delivery passed. The standard application suite passed all 147 tests. See [Integration verification](phase4_firebase_evidence.md#integration-verification--27-november-2026).
+
+The following 20 November record remains historical evidence for Omar's provider implementation. Its references to uncommitted work and deployment limitations describe that earlier session.
+
 Verified **20 November 2026 (Asia/Riyadh)** on branch `omar`, working tree based on `badb5bc` with uncommitted Provider improvements. This is the primary Provider implementation and testing record. The [root README](../README.md) owns shared application setup and team-wide feature status.
 
 ## Final Provider Interface and Testing Evidence
