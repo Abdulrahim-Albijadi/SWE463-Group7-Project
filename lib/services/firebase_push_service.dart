@@ -11,7 +11,6 @@ class FirebasePushService extends PushService {
   final FirebaseMessaging _messaging;
 
   @override
-  @override
   Future<PushPermission> requestPermission() async {
     final settings = await _messaging.requestPermission();
     return switch (settings.authorizationStatus) {
