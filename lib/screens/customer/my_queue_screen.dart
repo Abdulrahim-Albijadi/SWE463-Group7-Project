@@ -139,7 +139,7 @@ class MyQueueScreen extends StatelessWidget {
     final ticket = membership.currentEntry;
     final status = ticket?.status;
     final waiting = status == MembershipStatus.waiting;
-    final near = waiting && membership.customersAhead == 2;
+    final near = membership.isNearTurn;
     final skipped = status == MembershipStatus.skipped;
     final left = status == MembershipStatus.left;
     final terminal = status == MembershipStatus.served || skipped || left;
