@@ -8,8 +8,6 @@ import '../models/queue_data.dart';
 import 'repositories.dart';
 
 // Firestore implementation of the same API used by the existing Providers.
-// Phase 3 prototype: ticket numbers are assigned client-side and are not
-// guaranteed unique if multiple customers join at exactly the same time.
 class FirebaseQueueRepository extends QueueRepository {
   FirebaseQueueRepository({FirebaseFirestore? firestore})
       : _db = firestore ?? FirebaseFirestore.instance,
@@ -53,7 +51,9 @@ class FirebaseQueueRepository extends QueueRepository {
 
   Future<List<QueueEntry>> _entriesOf(String queueId) async {
     final snapshot =
-        await _entries.where('queueId', isEqualTo: queueId).get();
+        await _entries.where('queueId', isEqualTo: queueId).get(
+          const GetOptions(source: Source.server),
+        );
     return snapshot.docs.map(_entryFrom).toList();
   }
 
@@ -148,22 +148,27 @@ class FirebaseQueueRepository extends QueueRepository {
     try {
       // One fixed document ID per provider prevents duplicate queues.
       final ref = _queues.doc(provider.id);
-      final existing = await ref.get();
-      final check = QueueRules.checkCreateQueue(
-        user: provider,
-        hasQueue: existing.exists,
-        name: name,
-        averageServiceMinutes: averageServiceMinutes,
-      );
-      if (!check.isOk) return check;
-      await ref.set({
-        'providerId': provider.id,
-        'name': name.trim(),
-        'description': description.trim(),
-        'averageServiceMinutes': averageServiceMinutes,
-        'isOpen': true,
+      return await _db.runTransaction((transaction) async {
+        final existing = await transaction.get(ref);
+        final check = QueueRules.checkCreateQueue(
+          user: provider,
+          hasQueue: existing.exists,
+          name: name,
+          averageServiceMinutes: averageServiceMinutes,
+        );
+        if (!check.isOk) return check;
+        transaction.set(ref, {
+          'providerId': provider.id,
+          'name': name.trim(),
+          'description': description.trim(),
+          'averageServiceMinutes': averageServiceMinutes,
+          'isOpen': true,
+        });
+        transaction.set(_db.collection('queueTicketCounters').doc(ref.id), {
+          'lastTicket': 0,
+        });
+        return OperationResult.ok;
       });
-      return OperationResult.ok;
     } catch (error) {
       debugPrint('Firestore createQueue failed: $error');
       return OperationResult.failure(OperationError.failed);
@@ -176,27 +181,114 @@ class FirebaseQueueRepository extends QueueRepository {
     required String queueId,
   }) async {
     try {
-      final queueDoc = await _queues.doc(queueId).get();
-      final ownDocs = await _entries
-          .where('customerId', isEqualTo: customer.id)
-          .get();
-      final ownEntries = ownDocs.docs.map(_entryFrom);
-      final check = QueueRules.checkJoin(
-        user: customer,
-        queue: queueDoc.exists ? _queueFrom(queueDoc) : null,
-        hasActiveMembership: ownEntries.any((entry) => entry.isActive),
-      );
-      if (!check.isOk) return check;
-      final queueEntries = await _entriesOf(queueId);
-      await _entries.add({
-        'customerId': customer.id,
-        'customerName': customer.name,
-        'queueId': queueId,
-        'ticketNumber': QueueRules.nextTicketNumber(queueEntries),
-        'joinedAt': Timestamp.fromDate(DateTime.now()),
-        'status': MembershipStatus.waiting.name,
-      });
-      return OperationResult.ok;
+      final queueRef = _queues.doc(queueId);
+      final membershipRef = _db
+          .collection('customerMemberships')
+          .doc(customer.id);
+      final counterRef = _db.collection('queueTicketCounters').doc(queueId);
+      final entryRef = _entries.doc();
+
+      // Legacy lookups use queries, which Firestore transactions cannot read.
+      // Counters and membership pointers are permanent once created, so the
+      // transaction only uses these results if the corresponding doc is absent.
+      const server = GetOptions(source: Source.server);
+      final [membershipBeforeJoin, counterBeforeJoin] = await Future.wait([
+        membershipRef.get(server),
+        counterRef.get(server),
+      ]);
+      final legacyEntries = membershipBeforeJoin.exists
+          ? <QueryDocumentSnapshot<Map<String, dynamic>>>[]
+          : (await _entries
+                    .where('customerId', isEqualTo: customer.id)
+                    .get(server))
+                .docs;
+      final firstTicket = counterBeforeJoin.exists
+          ? null
+          : QueueRules.nextTicketNumber(
+              (await _entries.where('queueId', isEqualTo: queueId).get(server))
+                  .docs
+                  .map(_entryFrom),
+            );
+
+      String? attemptedMembership;
+      int? attemptedLastTicket;
+      var wroteJoin = false;
+
+      Future<OperationResult> joinTransaction(Transaction transaction) async {
+        wroteJoin = false;
+        final queueDoc = await transaction.get(queueRef);
+        final queue = queueDoc.exists ? _queueFrom(queueDoc) : null;
+        final queueCheck = QueueRules.checkJoin(
+          user: customer,
+          queue: queue,
+          hasActiveMembership: false,
+        );
+        if (!queueCheck.isOk) return queueCheck;
+
+        final membership = await transaction.get(membershipRef);
+        final previousEntryId = membership.data()?['entryId'] as String?;
+        var hasActiveMembership = false;
+        final previousEntries = previousEntryId == null
+            ? legacyEntries
+                  .where((doc) => _entryFrom(doc).isActive)
+                  .map((doc) => doc.reference)
+            : [_entries.doc(previousEntryId)];
+        for (final ref in previousEntries) {
+          final previous = await transaction.get(ref);
+          if (previous.exists && _entryFrom(previous).isActive) {
+            hasActiveMembership = true;
+            break;
+          }
+        }
+        final check = QueueRules.checkJoin(
+          user: customer,
+          queue: queue,
+          hasActiveMembership: hasActiveMembership,
+        );
+        if (!check.isOk) return check;
+
+        final counter = await transaction.get(counterRef);
+        final lastTicket = counter.data()?['lastTicket'] as int?;
+        final ticket = lastTicket == null ? firstTicket! : lastTicket + 1;
+
+        attemptedMembership = previousEntryId;
+        attemptedLastTicket = lastTicket;
+        wroteJoin = true;
+        transaction.set(counterRef, {
+          'lastTicket': ticket,
+          'entryId': entryRef.id,
+        });
+        transaction.set(membershipRef, {'entryId': entryRef.id});
+        transaction.set(entryRef, {
+          'customerId': customer.id,
+          'customerName': customer.name,
+          'queueId': queueId,
+          'ticketNumber': ticket,
+          'joinedAt': Timestamp.fromDate(DateTime.now()),
+          'status': MembershipStatus.waiting.name,
+        });
+        return OperationResult.ok;
+      }
+
+      for (var attempt = 1; ; attempt++) {
+        try {
+          return await _db.runTransaction(joinTransaction);
+        } on FirebaseException catch (error) {
+          if (error.code != 'permission-denied' || !wroteJoin || attempt == 3) {
+            rethrow;
+          }
+          // Rules can reject a competing write before Firestore checks the
+          // transaction's read versions. Retry only if a shared document moved.
+          final [membership, counter] = await Future.wait([
+            membershipRef.get(server),
+            counterRef.get(server),
+          ]);
+          if (membership.data()?['entryId'] == attemptedMembership &&
+              counter.data()?['lastTicket'] == attemptedLastTicket) {
+            rethrow;
+          }
+        }
+      }
     } catch (error) {
       debugPrint('Firestore join failed: $error');
       return OperationResult.failure(OperationError.failed);
@@ -210,18 +302,20 @@ class FirebaseQueueRepository extends QueueRepository {
   }) async {
     try {
       final ref = _entries.doc(entryId);
-      final snapshot = await ref.get();
-      if (!snapshot.exists) {
-        return OperationResult.failure(OperationError.notWaiting);
-      }
-      final entry = _entryFrom(snapshot);
-      if (entry.customerId != customer.id) {
-        return OperationResult.failure(OperationError.notOwner);
-      }
-      final check = QueueRules.checkLeave(entry);
-      if (!check.isOk) return check;
-      await ref.update({'status': MembershipStatus.left.name});
-      return OperationResult.ok;
+      return await _db.runTransaction((transaction) async {
+        final snapshot = await transaction.get(ref);
+        if (!snapshot.exists) {
+          return OperationResult.failure(OperationError.notWaiting);
+        }
+        final entry = _entryFrom(snapshot);
+        if (entry.customerId != customer.id) {
+          return OperationResult.failure(OperationError.notOwner);
+        }
+        final check = QueueRules.checkLeave(entry);
+        if (!check.isOk) return check;
+        transaction.update(ref, {'status': MembershipStatus.left.name});
+        return OperationResult.ok;
+      });
     } catch (error) {
       debugPrint('Firestore leave failed: $error');
       return OperationResult.failure(OperationError.failed);
@@ -249,11 +343,30 @@ class FirebaseQueueRepository extends QueueRepository {
       final owner = await _checkOwner(provider, queueId);
       if (!owner.isOk) return owner;
       final entries = await _entriesOf(queueId);
-      final check = QueueRules.checkCallNext(entries);
-      if (!check.isOk) return check;
-      final next = QueueRules.waitingEntries(entries).first;
-      await _entries.doc(next.id).update({'status': MembershipStatus.called.name});
-      return OperationResult.ok;
+      final state = _db.collection('queueServiceState').doc(queueId);
+      return await _db.runTransaction((transaction) async {
+        final currentState = await transaction.get(state);
+        final currentEntryId = currentState.data()?['entryId'] as String?;
+        final entriesToCheck = {
+          for (final entry in entries)
+            if (entry.isActive) entry.id,
+          ?currentEntryId,
+        };
+        final active = <QueueEntry>[];
+        for (final entryId in entriesToCheck) {
+          final snapshot = await transaction.get(_entries.doc(entryId));
+          if (snapshot.exists) active.add(_entryFrom(snapshot));
+        }
+
+        final check = QueueRules.checkCallNext(active);
+        if (!check.isOk) return check;
+        final next = QueueRules.waitingEntries(active).first;
+        transaction.set(state, {'entryId': next.id});
+        transaction.update(_entries.doc(next.id), {
+          'status': MembershipStatus.called.name,
+        });
+        return OperationResult.ok;
+      });
     } catch (error) {
       debugPrint('Firestore callNext failed: $error');
       return OperationResult.failure(OperationError.failed);
@@ -274,11 +387,20 @@ class FirebaseQueueRepository extends QueueRepository {
       final owner = await _checkOwner(provider, queueId);
       if (!owner.isOk) return owner;
       final entries = await _entriesOf(queueId);
-      final check = QueueRules.checkFinishCalled(entries);
-      if (!check.isOk) return check;
-      final called = QueueRules.calledEntry(entries)!;
-      await _entries.doc(called.id).update({'status': outcome.name});
-      return OperationResult.ok;
+      final called = QueueRules.calledEntry(entries);
+      if (called == null) {
+        return OperationResult.failure(OperationError.nothingCalled);
+      }
+
+      final ref = _entries.doc(called.id);
+      return await _db.runTransaction((transaction) async {
+        final snapshot = await transaction.get(ref);
+        if (snapshot.data()?['status'] != MembershipStatus.called.name) {
+          return OperationResult.failure(OperationError.nothingCalled);
+        }
+        transaction.update(ref, {'status': outcome.name});
+        return OperationResult.ok;
+      });
     } catch (error) {
       debugPrint('Firestore finishCalled failed: $error');
       return OperationResult.failure(OperationError.failed);

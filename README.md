@@ -80,10 +80,20 @@ Passwords are handled by Firebase Authentication and are not written to the appl
 - Flutter with a bundled Dart SDK satisfying `^3.13.1`, as declared in `pubspec.yaml`.
 - For the verified Android path: an Android development toolchain and an emulator or USB-debugging-enabled physical device.
 - Internet access and access to the configured Firebase project, or an appropriately configured replacement Firebase project.
-- Firebase configuration matching the selected target platform. The entry point imports `lib/firebase_options.dart`; retain or supply the appropriate configuration before running.
+- Firebase configuration matching the selected target platform. Obtain the client configuration from the team's Firebase project. Put the Android `google-services.json` in `android/app/` and the iOS `GoogleService-Info.plist` in `ios/Runner/` when building those platforms.
 - Firebase Authentication with Email/Password enabled and a Cloud Firestore database with the intended access rules. A team member with Firebase project access must confirm the configuration for a fresh environment.
 
-The Android package used in the manual run was `com.example.swe463_group7_project`. If the configured API key restricts Android applications, its allowed package and signing-certificate fingerprint must match the build being tested. Do not remove restrictions to bypass a configuration mismatch.
+Create an ignored `firebase.local.json` at the repository root. Include the keys for the platforms you build.
+
+```json
+{
+  "QUEUELESS_FIREBASE_WEB_API_KEY": "<web apiKey>",
+  "QUEUELESS_FIREBASE_ANDROID_API_KEY": "<Android current_key>",
+  "QUEUELESS_FIREBASE_IOS_API_KEY": "<iOS API_KEY>"
+}
+```
+
+The Android package used in the manual run was `com.example.swe463_group7_project`. If the configured API key restricts Android applications, its allowed package and signing-certificate fingerprint must match the build. Firebase client keys identify the project. Authentication and Firestore rules control data access. Keep keys scoped to the Firebase APIs the app uses. [Firebase API key documentation](https://firebase.google.com/docs/projects/api-keys)
 
 From the repository root:
 
@@ -92,7 +102,7 @@ flutter pub get
 flutter analyze
 flutter test
 flutter devices
-flutter run -d <device-id>
+flutter run -d <device-id> --dart-define-from-file=firebase.local.json
 ```
 
 Replace `<device-id>` with an ID reported by `flutter devices`. Android on a physical HONOR device is manually verified. A separate clean checkout at `7cdd0a0` passed dependency resolution, analysis, its then-current 69 tests, Android build/install/start, Firebase sign-in, and a queue read on the same configured machine. At `4d87822`, analysis, all 81 tests, and an Android Provider Dashboard/Manage Queue smoke check passed. The latter revision was not retested in a second clean clone. Omar's archived evidence also documents live Firebase operation in Chrome; see [Provider verification](docs/provider_testing.md).
@@ -101,9 +111,18 @@ Replace `<device-id>` with an ID reported by `flutter devices`. Android on a phy
 
 Create new test accounts through **Create Account** using distinct email addresses and select the required Customer or Provider role. Keep passwords private.
 
-The sign-in screen currently pre-fills and advertises old sample credentials. Those accounts are seeded only by the in-memory auth repository; they are not automatically created in Firebase. Replace the prefilled values with a registered Firebase account or register a new account.
+The sign-in fields start empty. Use the registered Firebase account to sign in.
 
 ## Testing instructions
+
+Run the backend test in Chrome against local Firebase Authentication and Firestore emulators. The test covers session state, concurrent joins, and simultaneous provider operations. It uses the demo project and starts with empty emulator data.
+
+See the [Phase 4 Firebase contribution and verification evidence](docs/phase4_firebase_evidence.md).
+
+```bash
+firebase emulators:exec --only auth,firestore --project demo-queueless-phase4 \
+  'flutter test --no-pub --platform chrome --dart-define=QUEUELESS_FIREBASE_EMULATOR=true test/firebase_join_emulator.dart'
+```
 
 Use a dedicated provider queue to avoid changing another team member's demonstration data. Example setup: queue name `Badr Android Test`, description `Phase 3 Android verification`, and average service duration `5` minutes. Ticket numbers depend on existing activity; the examples below assume a new, empty queue.
 
@@ -151,11 +170,9 @@ The inspected provider screens include loading and load-error states with Retry,
 ## Known issues and remaining work
 
 - **Push notifications:** no `firebase_messaging` or background push implementation is present. In-app messages do not provide notifications while the app is closed or in the background.
-- **Concurrent ticket allocation:** the Firebase repository calculates ticket numbers client-side. Simultaneous joins may receive duplicate numbers; transactional allocation remains future work.
-- **Concurrency verification:** the single-active-membership and single-called-customer rules need review and testing under simultaneous requests. Current manual checks used sequential actions.
+- **Phase 4 rollout:** the updated app and Firestore rules must be released together. Existing entries remain readable. Each queue's first counter is seeded from its existing ticket numbers. Previously issued tickets keep their numbers.
 - **Fresh setup:** a clean checkout at `7cdd0a0` ran successfully on the existing configured Android development machine. A completely new machine/signing key and a clean clone of the latest revision have not been verified; Firebase configuration and Android application restrictions must match that environment.
 - **Multiple devices/platforms:** live Firebase operation across independent Chrome profiles is documented in the archived Provider evidence. Simultaneous operation on two physical devices and native iOS/desktop builds remain unverified.
-- **Old demo text:** the Login screen still pre-fills and displays sample account credentials that are not guaranteed to exist in Firebase.
 - **Failure-path verification:** controlled network failures and all retry/validation variants have not been manually exercised in the recorded session.
 - **Submission evidence:** finalize the Phase 3 PDF, verify each member's contribution evidence, and create the `phase-3` tag only when the submitted revision is ready. This README does not claim the tag already exists.
 
@@ -207,6 +224,8 @@ These are `pubspec.yaml` constraints; `pubspec.lock` records resolved versions. 
 - [Cloud Functions Firestore triggers — planned work](https://firebase.google.com/docs/functions/firestore-events)
 
 ## Licenses and AI use
+
+During Phase 4, Codex assisted with account-state debugging, sign-in and session routing, Firestore transaction and rules changes, Firebase configuration, emulator testing, and drafting the backend verification and contribution evidence.
 
 Retain third-party notices and review the LICENSE files for the resolved package versions before distribution. The Phase 2 reference record identifies Flutter as BSD 3-Clause, Provider as MIT, Material Icons as Apache License 2.0, Firebase documentation content as CC BY 4.0 with code samples under Apache License 2.0, and Figma as subject to its terms of service. Documentation licenses do not replace package licenses or Firebase service terms.
 

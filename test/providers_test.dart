@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:swe463_group7_project/logic/queue_rules.dart';
 import 'package:swe463_group7_project/models/queue_data.dart';
@@ -12,6 +14,15 @@ const provider = AppUser(
   email: 'p1@example.com',
   role: UserRole.provider,
 );
+
+class _StreamAuthRepository extends AuthRepository {
+  _StreamAuthRepository(this.states) : super(seedDemoAccounts: false);
+
+  final Stream<AppUser?> states;
+
+  @override
+  Stream<AppUser?> authStateChanges() => states;
+}
 
 AppUser customer(int number) => AppUser(
   id: 'c$number',
@@ -282,6 +293,25 @@ void main() {
   });
 
   group('AuthProvider', () {
+    test('clears the current user when the account listener fails', () async {
+      final states = StreamController<AppUser?>();
+      final auth = AuthProvider(_StreamAuthRepository(states.stream));
+      addTearDown(() async {
+        auth.dispose();
+        await states.close();
+      });
+
+      states.add(provider);
+      await pumpEventQueue();
+      expect(auth.currentUser, provider);
+
+      states.addError(StateError('Profile listener failed'));
+      await pumpEventQueue();
+      expect(auth.status, AuthStatus.signedOut);
+      expect(auth.currentUser, isNull);
+      expect(auth.error, isNotNull);
+    });
+
     test('signs in a seeded account and rejects a wrong password', () async {
       final auth = AuthProvider(AuthRepository());
       await pumpEventQueue();

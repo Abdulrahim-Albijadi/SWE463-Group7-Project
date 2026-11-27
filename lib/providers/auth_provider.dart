@@ -13,6 +13,7 @@ class AuthProvider extends ChangeNotifier with SafeNotifier {
     _subscription = _repository.authStateChanges().listen(
       _onUserChanged,
       onError: (Object error, StackTrace stackTrace) {
+        _currentUser = null;
         _status = AuthStatus.signedOut;
         _error = OperationResult.failure(OperationError.failed).message;
         notifyListeners();

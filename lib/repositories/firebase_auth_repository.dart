@@ -8,10 +8,13 @@ import 'repositories.dart';
 import 'dart:async';
 
 class FirebaseAuthRepository extends AuthRepository {
-  FirebaseAuthRepository() : super(seedDemoAccounts: false);
+  FirebaseAuthRepository({FirebaseAuth? auth, FirebaseFirestore? firestore})
+    : _auth = auth ?? FirebaseAuth.instance,
+      _db = firestore ?? FirebaseFirestore.instance,
+      super(seedDemoAccounts: false);
 
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  final FirebaseFirestore _db = FirebaseFirestore.instance;
+  final FirebaseAuth _auth;
+  final FirebaseFirestore _db;
 
   // Convert a Firestore profile into an app user.
   AppUser? _toAppUser(User user, Map<String, dynamic>? data) {
@@ -112,12 +115,22 @@ class FirebaseAuthRepository extends AuthRepository {
       );
 
       final user = credential.user!;
-      final document = await _db.collection('users').doc(user.uid).get();
-
-      final appUser = _toAppUser(user, document.data());
+      final AppUser? appUser;
+      try {
+        final document = await _db.collection('users').doc(user.uid).get();
+        appUser = _toAppUser(user, document.data());
+      } catch (_) {
+        await _signOutIfCurrent(user);
+        return AuthOutcome(
+          OperationResult.failure(
+            OperationError.failed,
+            'Could not load your profile. Please try again.',
+          ),
+        );
+      }
 
       if (appUser == null) {
-        await _auth.signOut();
+        await _signOutIfCurrent(user);
         return AuthOutcome(
           OperationResult.failure(
             OperationError.failed,
@@ -142,6 +155,12 @@ class FirebaseAuthRepository extends AuthRepository {
       return AuthOutcome(OperationResult.failure(OperationError.failed));
     } catch (_) {
       return AuthOutcome(OperationResult.failure(OperationError.failed));
+    }
+  }
+
+  Future<void> _signOutIfCurrent(User user) async {
+    if (_auth.currentUser?.uid == user.uid) {
+      await _auth.signOut();
     }
   }
 

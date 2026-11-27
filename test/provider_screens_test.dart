@@ -1795,6 +1795,7 @@ void main() {
         find.byType(TextFormField).first,
         'provider@example.com',
       );
+      await tester.enterText(find.byType(TextFormField).at(1), 'demopass');
       await tap(tester, filled('Sign In'));
       await tester.pumpAndSettle();
       expect(find.text('Provider Dashboard'), findsOneWidget);
@@ -1825,6 +1826,7 @@ void main() {
           find.byType(TextFormField).first,
           'provider@example.com',
         );
+        await tester.enterText(find.byType(TextFormField).at(1), 'demopass');
         await tap(tester, filled('Sign In'));
         await tester.pumpAndSettle();
         await tap(tester, filled('Manage Queue'));
