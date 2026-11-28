@@ -31,8 +31,7 @@ AppUser customer(int number) => AppUser(
   role: UserRole.customer,
 );
 
-Future<(QueueRepository, String)>
-createQueueWithThreeCustomers() async {
+Future<(QueueRepository, String)> createQueueWithThreeCustomers() async {
   final repository = QueueRepository(seedSampleData: false);
   await repository.createQueue(
     provider: provider,

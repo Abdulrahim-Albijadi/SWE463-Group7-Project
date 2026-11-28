@@ -12,10 +12,7 @@ import '../models/queue_data.dart';
 // writes. Method names, parameters and results stay the same, so no Provider
 // or screen changes.
 class QueueRepository {
-  QueueRepository({
-    this.latency = Duration.zero,
-    bool seedSampleData = true,
-  }) {
+  QueueRepository({this.latency = Duration.zero, bool seedSampleData = true}) {
     if (seedSampleData) _seed();
   }
 
@@ -113,20 +110,19 @@ class QueueRepository {
   Stream<List<QueueEntry>> watchEntries(String queueId) =>
       _watch(() => _entriesOf(queueId));
 
-  Stream<QueueEntry?> watchLatestEntryOfCustomer(String customerId) =>
-      _watch(() {
-        final own = _entries
-            .where((entry) => entry.customerId == customerId)
-            .toList();
-        if (own.isEmpty) return null;
-        own.sort((a, b) {
-          final byTime = b.joinedAt.compareTo(a.joinedAt);
-          return byTime != 0
-              ? byTime
-              : b.ticketNumber.compareTo(a.ticketNumber);
-        });
-        return own.first;
+  Stream<QueueEntry?> watchLatestEntryOfCustomer(String customerId) => _watch(
+    () {
+      final own = _entries
+          .where((entry) => entry.customerId == customerId)
+          .toList();
+      if (own.isEmpty) return null;
+      own.sort((a, b) {
+        final byTime = b.joinedAt.compareTo(a.joinedAt);
+        return byTime != 0 ? byTime : b.ticketNumber.compareTo(a.ticketNumber);
       });
+      return own.first;
+    },
+  );
 
   Future<OperationResult> createQueue({
     required AppUser provider,
@@ -265,10 +261,7 @@ class _Account {
 // registration. Results are an AuthOutcome: the user on success, or an
 // OperationError on failure.
 class AuthRepository {
-  AuthRepository({
-    this.latency = Duration.zero,
-    bool seedDemoAccounts = true,
-  }) {
+  AuthRepository({this.latency = Duration.zero, bool seedDemoAccounts = true}) {
     if (seedDemoAccounts) {
       _add(
         const AppUser(
@@ -359,7 +352,7 @@ class AuthRepository {
     _changes.add(null);
   }
 
-    // Notification tokens by user id.
+  // Notification tokens by user id.
   // FirebaseAuthRepository saves them on the user's account instead.
   final Map<String, String> _deviceTokens = {};
 

@@ -1,7 +1,6 @@
 // Result of asking the user to allow notifications.
 enum PushPermission { granted, denied, unsupported }
 
-
 // FirebasePushService replaces these methods with the real calls. Nothing
 // outside this folder depends on Firebase Cloud Messaging.
 class PushService {

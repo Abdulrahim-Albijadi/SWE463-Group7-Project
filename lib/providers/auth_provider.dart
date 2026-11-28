@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
+
 import '../logic/queue_rules.dart';
 import '../models/queue_data.dart';
 import '../repositories/repositories.dart';

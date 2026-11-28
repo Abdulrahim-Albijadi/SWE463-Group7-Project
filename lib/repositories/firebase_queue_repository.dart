@@ -10,8 +10,8 @@ import 'repositories.dart';
 // Firestore implementation of the same API used by the existing Providers.
 class FirebaseQueueRepository extends QueueRepository {
   FirebaseQueueRepository({FirebaseFirestore? firestore})
-      : _db = firestore ?? FirebaseFirestore.instance,
-        super(seedSampleData: false);
+    : _db = firestore ?? FirebaseFirestore.instance,
+      super(seedSampleData: false);
 
   final FirebaseFirestore _db;
 
@@ -50,10 +50,9 @@ class FirebaseQueueRepository extends QueueRepository {
   }
 
   Future<List<QueueEntry>> _entriesOf(String queueId) async {
-    final snapshot =
-        await _entries.where('queueId', isEqualTo: queueId).get(
-          const GetOptions(source: Source.server),
-        );
+    final snapshot = await _entries
+        .where('queueId', isEqualTo: queueId)
+        .get(const GetOptions(source: Source.server));
     return snapshot.docs.map(_entryFrom).toList();
   }
 
@@ -75,29 +74,25 @@ class FirebaseQueueRepository extends QueueRepository {
             waitingCount: QueueRules.waitingEntries(
               entries!.where((entry) => entry.queueId == queue.id),
             ).length,
-            calledCount: QueueRules.calledEntry(
-              entries!.where((entry) => entry.queueId == queue.id),
-            ) == null
+            calledCount:
+                QueueRules.calledEntry(
+                      entries!.where((entry) => entry.queueId == queue.id),
+                    ) ==
+                    null
                 ? 0
                 : 1,
           ),
       ]);
     }
 
-    queuesSubscription = _queues.snapshots().listen(
-      (snapshot) {
-        queues = snapshot.docs.map(_queueFrom).toList();
-        publish();
-      },
-      onError: controller.addError,
-    );
-    entriesSubscription = _entries.snapshots().listen(
-      (snapshot) {
-        entries = snapshot.docs.map(_entryFrom).toList();
-        publish();
-      },
-      onError: controller.addError,
-    );
+    queuesSubscription = _queues.snapshots().listen((snapshot) {
+      queues = snapshot.docs.map(_queueFrom).toList();
+      publish();
+    }, onError: controller.addError);
+    entriesSubscription = _entries.snapshots().listen((snapshot) {
+      entries = snapshot.docs.map(_entryFrom).toList();
+      publish();
+    }, onError: controller.addError);
     controller.onCancel = () async {
       await queuesSubscription.cancel();
       await entriesSubscription.cancel();
@@ -106,16 +101,16 @@ class FirebaseQueueRepository extends QueueRepository {
   }
 
   @override
-  Stream<ServiceQueue?> watchQueue(String queueId) =>
-      _queues.doc(queueId).snapshots().map(
-        (snapshot) => snapshot.exists ? _queueFrom(snapshot) : null,
-      );
+  Stream<ServiceQueue?> watchQueue(String queueId) => _queues
+      .doc(queueId)
+      .snapshots()
+      .map((snapshot) => snapshot.exists ? _queueFrom(snapshot) : null);
 
   @override
-  Stream<ServiceQueue?> watchQueueOfProvider(String providerId) =>
-      _queues.doc(providerId).snapshots().map(
-        (snapshot) => snapshot.exists ? _queueFrom(snapshot) : null,
-      );
+  Stream<ServiceQueue?> watchQueueOfProvider(String providerId) => _queues
+      .doc(providerId)
+      .snapshots()
+      .map((snapshot) => snapshot.exists ? _queueFrom(snapshot) : null);
 
   @override
   Stream<List<QueueEntry>> watchEntries(String queueId) => _entries

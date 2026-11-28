@@ -59,10 +59,10 @@ void main() {
         entry(2, MembershipStatus.waiting, minute: 5),
         entry(1, MembershipStatus.waiting, minute: 5),
       ];
-      expect(
-        QueueRules.activeEntries(entries).map((e) => e.ticketNumber),
-        [1, 2],
-      );
+      expect(QueueRules.activeEntries(entries).map((e) => e.ticketNumber), [
+        1,
+        2,
+      ]);
     });
 
     test('the called customer counts ahead of waiting customers', () {
@@ -249,9 +249,8 @@ void main() {
         isTrue,
       );
       expect(
-        QueueRules.checkFinishCalled([
-          entry(1, MembershipStatus.waiting),
-        ]).error,
+        QueueRules.checkFinishCalled([entry(1, MembershipStatus.waiting)])
+            .error,
         OperationError.nothingCalled,
       );
     });

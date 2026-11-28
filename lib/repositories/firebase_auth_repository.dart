@@ -232,7 +232,7 @@ class FirebaseAuthRepository extends AuthRepository {
     await _auth.signOut();
   }
 
-    // Store this device's notification token on the user's profile. The
+  // Store this device's notification token on the user's profile. The
   // notification function reads it as users/{uid}.fcmToken.
   @override
   Future<void> saveDeviceToken(String userId, String token) async {

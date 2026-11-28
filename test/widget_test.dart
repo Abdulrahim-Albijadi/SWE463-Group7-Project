@@ -26,7 +26,10 @@ void main() {
 
       expect(find.text(homeTitle), findsOneWidget);
       expect(find.byType(LoginScreen), findsNothing);
-      expect(Navigator.of(tester.element(find.text(homeTitle))).canPop(), false);
+      expect(
+        Navigator.of(tester.element(find.text(homeTitle))).canPop(),
+        false,
+      );
     });
   }
 
@@ -44,8 +47,14 @@ void main() {
     await tester.pumpAndSettle();
 
     final fields = find.byType(TextFormField);
-    expect(tester.widget<TextFormField>(fields.at(0)).controller!.text, isEmpty);
-    expect(tester.widget<TextFormField>(fields.at(1)).controller!.text, isEmpty);
+    expect(
+      tester.widget<TextFormField>(fields.at(0)).controller!.text,
+      isEmpty,
+    );
+    expect(
+      tester.widget<TextFormField>(fields.at(1)).controller!.text,
+      isEmpty,
+    );
     await tester.enterText(fields.at(0), 'customer@example.com');
     await tester.enterText(fields.at(1), 'demopass');
 

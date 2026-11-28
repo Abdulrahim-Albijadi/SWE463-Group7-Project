@@ -1,5 +1,3 @@
-
-
 // Plain data used across the app. These classes hold no state and have no
 // setters. Shared state lives in the Providers (lib/providers) and the queue
 // rules live in logic/queue_rules.dart.
@@ -12,7 +10,7 @@ enum MembershipStatus { waiting, called, served, skipped, left }
 enum NotificationType { nearTurn, called }
 
 class AppUser {
-  const AppUser({ 
+  const AppUser({
     required this.id,
     required this.name,
     required this.email,
@@ -51,7 +49,7 @@ class QueueEntry {
     required this.joinedAt,
     required this.status,
   });
-  final String id; 
+  final String id;
   final String customerId;
   final String customerName;
   final String queueId;
@@ -59,10 +57,8 @@ class QueueEntry {
   final DateTime joinedAt;
   final MembershipStatus status;
 
-  
-    bool get isActive =>
+  bool get isActive =>
       status == MembershipStatus.waiting || status == MembershipStatus.called;
-
 
   // Creates a copy of the current QueueEntry with optional new values for its properties.
   QueueEntry copyWith({MembershipStatus? status}) => QueueEntry(
@@ -75,9 +71,6 @@ class QueueEntry {
     status: status ?? this.status,
   );
 }
-
-
-
 
 class QueueNotification {
   const QueueNotification({
@@ -92,8 +85,6 @@ class QueueNotification {
   final DateTime createdAt;
 }
 
-
-
 // A queue with the customer counts shown on Customer Home and Queue Details.
 class QueueSummary {
   const QueueSummary({
@@ -107,6 +98,3 @@ class QueueSummary {
 
   int get activeCount => waitingCount + calledCount;
 }
-
-
-

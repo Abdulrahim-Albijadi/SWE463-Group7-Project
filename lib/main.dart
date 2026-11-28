@@ -1,6 +1,7 @@
-
 import 'dart:async';
+
 import 'services/firebase_push_service.dart';
+
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
@@ -162,9 +163,7 @@ class _QueueLessAppState extends State<QueueLessApp> {
         (auth) => auth.status == AuthStatus.initializing,
       );
       if (initializing) {
-        return const Scaffold(
-          body: Center(child: CircularProgressIndicator()),
-        );
+        return const Scaffold(body: Center(child: CircularProgressIndicator()));
       }
       return navigator!;
     },
@@ -263,7 +262,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   const SizedBox(height: 14),
                   Text(
                     auth.error!,
-                    style: TextStyle(color: Theme.of(context).colorScheme.error),
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.error,
+                    ),
                   ),
                 ],
                 const SizedBox(height: 18),
@@ -369,8 +370,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
               controller: _password,
               obscureText: true,
               decoration: const InputDecoration(labelText: 'Password'),
-              validator: (v) =>
-                  v == null || v.length < 6 ? 'Use at least 6 characters' : null,
+              validator: (v) => v == null || v.length < 6
+                  ? 'Use at least 6 characters'
+                  : null,
             ),
             const SizedBox(height: 12),
             TextFormField(
@@ -385,8 +387,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
             const SizedBox(height: 8),
             SegmentedButton<UserRole>(
               segments: const [
-                ButtonSegment(value: UserRole.customer, label: Text('Customer')),
-                ButtonSegment(value: UserRole.provider, label: Text('Provider')),
+                ButtonSegment(
+                  value: UserRole.customer,
+                  label: Text('Customer'),
+                ),
+                ButtonSegment(
+                  value: UserRole.provider,
+                  label: Text('Provider'),
+                ),
               ],
               selected: {role},
               onSelectionChanged: (selection) =>
