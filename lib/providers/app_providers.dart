@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../services/push_service.dart';
 import 'push_provider.dart';
 import '../repositories/repositories.dart';
@@ -20,7 +21,7 @@ class AppProviders extends StatelessWidget {
   });
   final AuthRepository authRepository;
   final QueueRepository queueRepository;
-  final PushService pushService;// Where the device's push token comes from. The default does nothing.
+  final PushService pushService; // Where the device's push token comes from. The default does nothing.
   final Widget child;
 
   @override

@@ -82,9 +82,9 @@ class QueueRules {
   }
 
   static List<QueueEntry> waitingEntries(Iterable<QueueEntry> entries) =>
-      activeEntries(
-        entries,
-      ).where((entry) => entry.status == MembershipStatus.waiting).toList();
+      activeEntries(entries)
+          .where((entry) => entry.status == MembershipStatus.waiting)
+          .toList();
 
   static QueueEntry? calledEntry(Iterable<QueueEntry> entries) {
     for (final entry in activeEntries(entries)) {
@@ -95,9 +95,8 @@ class QueueRules {
 
   // Position starts at 1. Null when the entry is not active in this queue.
   static int? positionOf(Iterable<QueueEntry> entries, String entryId) {
-    final index = activeEntries(
-      entries,
-    ).indexWhere((entry) => entry.id == entryId);
+    final index = activeEntries(entries)
+        .indexWhere((entry) => entry.id == entryId);
     return index < 0 ? null : index + 1;
   }
 

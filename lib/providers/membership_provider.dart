@@ -235,11 +235,7 @@ class MembershipProvider extends ChangeNotifier with SafeNotifier {
         'It is your turn at ${_queue?.name ?? 'the queue'}.',
       );
     } else if (isNearTurn) {
-      _announce(
-        entry,
-        NotificationType.nearTurn,
-        'Your turn is near.',
-      );
+      _announce(entry, NotificationType.nearTurn, 'Your turn is near.');
     }
   }
 

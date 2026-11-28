@@ -108,15 +108,18 @@ void main() {
     expect(accounts.deviceTokenOf('customer-a'), isNull);
   });
 
-  test('the default push service reports notifications as unavailable', () async {
-    final plain = PushProvider(const PushService(), accounts)
-      ..bindUser(customerA);
-    await pumpEventQueue();
+  test(
+    'the default push service reports notifications as unavailable',
+    () async {
+      final plain = PushProvider(const PushService(), accounts)
+        ..bindUser(customerA);
+      await pumpEventQueue();
 
-    expect(plain.status, PushStatus.unavailable);
-    expect(accounts.deviceTokenOf('customer-a'), isNull);
-    plain.dispose();
-  });
+      expect(plain.status, PushStatus.unavailable);
+      expect(accounts.deviceTokenOf('customer-a'), isNull);
+      plain.dispose();
+    },
+  );
 
   test('a missing token or a failing push service shows an error', () async {
     push.token = null;
