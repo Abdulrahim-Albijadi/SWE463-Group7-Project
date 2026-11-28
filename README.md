@@ -1,10 +1,41 @@
 # QueueLess
 
-**SWE 463 | Group 7 | Phase 4: Final Application — In Progress**
+**SWE 463 | Group 7 | Phase 4: Final Application — Release verified; final submission preparation**
 
 QueueLess is a Flutter virtual queue application. Customers browse services, join or leave a queue, and track their ticket, customers ahead, estimated wait, and turn status. Providers create a queue, view waiting customers, call the next customer, and mark the called customer as served or skipped.
 
 The current application uses Firebase Authentication, Cloud Firestore, Provider, and Firebase Cloud Messaging. Near-turn and called alerts appear inside the application. Android background push delivery was verified using a local trusted Node.js sender while the Firebase project remained on Spark. The sender must stay running and connected; Cloud Functions have not been deployed. See [Local notification setup and verification](docs/local_notifications.md).
+
+## Latest release verification — 28 November 2026
+
+Application source `c94338e` was verified from a clean checkout on the
+existing configured Windows machine:
+
+- `flutter analyze`: no issues found.
+- `flutter test`: all 147 tests passed.
+- Release-mode APK built, installed and launched on a physical
+  HONOR NTH NX9 running Android 13.
+- Saved customer session restoration, join, leave cancellation and
+  confirmation, rejoin, Call Next, Served and Skip were verified.
+- Provider sign-in and Call Next also worked on the Android release APK.
+- New provider registration, queue-form validation and queue creation
+  were verified.
+- Called background notification delivery succeeded with the trusted
+  local sender running.
+
+Artifact: `Group07_QueueLess.apk` (approximately 50.1 MB).
+
+SHA-256:
+`48EF4DF67DD8C007DCABE7FF8C7B8FBECA12C7A0DF6D835E57C1F99C40EB1FB3`
+
+The APK uses the repository's debug signing configuration in release
+mode; store signing is not claimed. Cloud Functions were not deployed.
+
+See [Final release verification](docs/final_release_verification.md)
+for test details, build environment adjustments and verification limits.
+
+The `final-submission` tag is pending the final repository checks.
+Earlier dated verification records below describe their stated revisions.
 
 ## Team
 
@@ -15,7 +46,14 @@ The current application uses Firebase Authentication, Cloud Firestore, Provider,
 | Bader Alshehri | 202178070 | Customer interface and navigation |
 | Bader Almutairi | 202159390 | Queue rules, waiting estimates, and notifications |
 
-These are assigned areas. The Phase 4 report must record each member's actual completed work with specific commits, issues, or pull requests.
+### Phase 4 contribution evidence
+
+| Member | Completed work | Evidence |
+| --- | --- | --- |
+| Abdulrahim Albijadi | Firebase configuration, account/session handling, transactional queue operations, Firestore rules and backend emulator scenario. | [Backend commit](https://github.com/Abdulrahim-Albijadi/SWE463-Group7-Project/commit/a83fcb2), [Firebase evidence](docs/phase4_firebase_evidence.md) |
+| Omar Alshehri | Provider dashboard, queue creation/management, validation, action safety, responsive layouts and provider tests. | [PR #17](https://github.com/Abdulrahim-Albijadi/SWE463-Group7-Project/pull/17), [Provider evidence](docs/provider_testing.md) |
+| Bader Alshehri | Customer navigation and ticket safety, responsive UI/tests, local sender integration, live verification, release APK checks and report preparation. | [PR #18](https://github.com/Abdulrahim-Albijadi/SWE463-Group7-Project/pull/18), [PR #21](https://github.com/Abdulrahim-Albijadi/SWE463-Group7-Project/pull/21), [PR #23](https://github.com/Abdulrahim-Albijadi/SWE463-Group7-Project/pull/23), [Release verification](docs/final_release_verification.md) |
+| Bader Almutairi | Shared queue rules, waiting estimates, notification permission/token handling and server notification logic/tests. | [PR #19](https://github.com/Abdulrahim-Albijadi/SWE463-Group7-Project/pull/19), [PR #20](https://github.com/Abdulrahim-Albijadi/SWE463-Group7-Project/pull/20), [Notification evidence](docs/local_notifications.md) |
 
 ## Current feature progress
 
@@ -43,6 +81,34 @@ The application has nine major screens:
 Customer flow: Login/Register → Customer Home → Queue Details → Join Queue → My Queue. Home and My Queue are accessible through bottom navigation.
 
 Provider flow: Login/Register → Provider Dashboard → Create Queue → Queue Management. Dashboard and Manage Queue are accessible through bottom navigation. Shared Profile provides account information and logout confirmation.
+
+## Final Android screenshots
+
+Captured from the installed release-mode APK on a physical
+HONOR NTH NX9 (Android 13), 28 November 2026.
+Some screenshots show scrolled views.
+
+| Login | Register | Profile |
+| --- | --- | --- |
+| <img src="docs/evidence/release_android/login.png" width="220" alt="Login"> | <img src="docs/evidence/release_android/register.png" width="220" alt="Register"> | <img src="docs/evidence/release_android/profile.png" width="220" alt="Profile"> |
+
+| Customer Home | Queue Details | My Queue |
+| --- | --- | --- |
+| <img src="docs/evidence/release_android/customer_home.png" width="220" alt="Customer Home"> | <img src="docs/evidence/release_android/queue_details.png" width="220" alt="Queue Details"> | <img src="docs/evidence/release_android/my_queue_waiting.png" width="220" alt="Waiting ticket"> |
+
+| Provider Dashboard | Create Queue | Queue Management |
+| --- | --- | --- |
+| <img src="docs/evidence/release_android/provider_dashboard.png" width="220" alt="Provider Dashboard"> | <img src="docs/evidence/release_android/create_queue.png" width="220" alt="Create Queue"> | <img src="docs/evidence/release_android/queue_management.png" width="220" alt="Queue Management"> |
+
+Additional captures show
+[Called](docs/evidence/release_android/my_queue_called.png),
+[Served](docs/evidence/release_android/my_queue_served.png),
+[registration validation](docs/evidence/release_android/register_validation.png),
+[queue validation](docs/evidence/release_android/queue_validation.png),
+[no queue yet](docs/evidence/release_android/provider_no_queue.png)
+and [successful creation](docs/evidence/release_android/queue_created.png).
+
+See [screenshot sources](docs/evidence/release_android/README.md).
 
 ## State management and data
 
@@ -185,7 +251,7 @@ Earlier checks on **13 November 2026**:
 
 Omar's original **12 November 2026** browser/Firebase evidence documents independent Customer/Provider sessions, live updates without refreshing, and queue/terminal-ticket persistence after reload and explicit sign-in. The later organization work and its logs are described in [Provider testing](docs/provider_testing.md). Historical failures remain in the archived logs; later passing results are recorded separately.
 
-These results apply to the stated revisions and environments. Saved customer session restoration was verified on the tested Android device. A clean checkout of the final revision and setup on a completely new development machine remain unverified. Rerun relevant checks after further code changes.
+These results apply to the stated revisions and environments. Saved customer session restoration was verified on the tested Android device. A clean checkout at c94338e was verified on 28 November 2026. The eventual final tagged revision still requires its final checks; setup on a completely new development machine remains unverified. Rerun relevant checks after further code changes.
 
 ## Loading, empty, validation, and failure states
 
@@ -194,11 +260,11 @@ The inspected provider screens include loading and load-error states with Retry,
 ## Known issues and remaining work
 
 - **Push notification hosting:** Android background delivery is verified with the local sender. It requires a running, connected laptop and is restricted to the configured test queue and customer. Always-on hosting, recovery after interruption, foreground system notifications, and notification-tap routing remain unverified.
-- **Phase 4 rollout:** updated Firestore rules were deployed on 27 November 2026 and the updated application passed the documented live workflow checks. Use the matching updated application; older clients do not perform the synchronized writes required by these rules. Release APK and final release verification remain pending.
-- **Fresh setup:** a clean checkout at `7cdd0a0` ran successfully on the existing configured Android development machine. A completely new machine/signing key and a clean clone of the latest revision have not been verified; Firebase configuration and Android application restrictions must match that environment.
+- **Phase 4 rollout:** updated Firestore rules were deployed on 27 November 2026 and the updated application passed the documented live workflow checks. Use the matching updated application; older clients do not perform the synchronized writes required by these rules. The release APK was built, installed and exercised on 28 November 2026; see docs/final_release_verification.md.
+- **Fresh setup:** a clean checkout at `7cdd0a0` ran successfully on the existing configured Android development machine. A clean checkout at c94338e passed analysis, all 147 standard tests and release APK build/install checks on the existing configured machine on 28 November 2026. Setup on a completely new machine or signing key remains unverified; Firebase configuration and Android application restrictions must match that environment.
 - **Multiple devices/platforms:** live Firebase operation across independent Chrome profiles is documented in the archived Provider evidence. Simultaneous operation on two physical devices and native iOS/desktop builds remain unverified.
 - **Failure-path verification:** controlled network failures and all retry/validation variants have not been manually exercised in the recorded session.
-- **Submission evidence:** finalize the Phase 4 report and contribution evidence, complete release verification, and create the `final-submission` tag only when the final submitted revision is ready.
+- **Submission evidence:** finalize the Phase 4 report, screenshots and contribution evidence, run the final repository checks, and create the `final-submission` tag only when the final submitted revision is ready.
 
 ## Project structure
 
