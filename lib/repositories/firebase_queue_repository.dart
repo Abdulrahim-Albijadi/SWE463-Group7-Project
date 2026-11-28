@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/foundation.dart';
 
 import '../logic/queue_rules.dart';
 import '../models/queue_data.dart';
@@ -165,7 +164,6 @@ class FirebaseQueueRepository extends QueueRepository {
         return OperationResult.ok;
       });
     } catch (error) {
-      debugPrint('Firestore createQueue failed: $error');
       return OperationResult.failure(OperationError.failed);
     }
   }
@@ -285,7 +283,6 @@ class FirebaseQueueRepository extends QueueRepository {
         }
       }
     } catch (error) {
-      debugPrint('Firestore join failed: $error');
       return OperationResult.failure(OperationError.failed);
     }
   }
@@ -312,7 +309,6 @@ class FirebaseQueueRepository extends QueueRepository {
         return OperationResult.ok;
       });
     } catch (error) {
-      debugPrint('Firestore leave failed: $error');
       return OperationResult.failure(OperationError.failed);
     }
   }
@@ -363,7 +359,6 @@ class FirebaseQueueRepository extends QueueRepository {
         return OperationResult.ok;
       });
     } catch (error) {
-      debugPrint('Firestore callNext failed: $error');
       return OperationResult.failure(OperationError.failed);
     }
   }
@@ -397,7 +392,6 @@ class FirebaseQueueRepository extends QueueRepository {
         return OperationResult.ok;
       });
     } catch (error) {
-      debugPrint('Firestore finishCalled failed: $error');
       return OperationResult.failure(OperationError.failed);
     }
   }
