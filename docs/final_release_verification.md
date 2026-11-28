@@ -101,3 +101,34 @@ The local sender requires a running, connected trusted computer.
 Create `final-submission` only after final documentation is merged,
 required checks pass, and repository/report access is verified.
 The final tag and its revision must be recorded before submission.
+
+## Updated release APK — application source a11efd5
+
+After Dart formatting and removal of diagnostic debug logging,
+a new release-mode APK was built from `a11efd5`.
+
+- Release build succeeded in 69.1 seconds, approximately 50.1 MB.
+- `adb install -r` returned Success.
+- Launch restored the saved provider account and its queue.
+- On the updated APK, the customer joined Phase 4 Release Test as #1.
+- Provider sign-in, Call Next and Mark as Served succeeded.
+- Customer sign-in displayed #1 as Served.
+
+The preserved submission artifact is `Group07_QueueLess.apk`.
+
+SHA-256:
+
+```text
+8BE72DDE46C22CF374EC2FDF376888D81AB81FB26930BFA7C7B8CB3839501F2E
+```
+
+The previous c94338e artifact was retained locally as
+`Group07_QueueLess_c94338e.apk`. Its hash and detailed checks above
+are historical evidence, not the hash of the updated APK.
+
+The screenshots document the earlier c94338e release. Subsequent
+application changes were Dart formatting and removal of diagnostic
+logging. The updated APK was checked with the lifecycle recorded here.
+
+Background notification delivery was not repeated on this updated APK;
+the earlier successful delivery checks remain dated evidence.

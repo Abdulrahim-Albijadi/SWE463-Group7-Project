@@ -6,7 +6,27 @@ QueueLess is a Flutter virtual queue application. Customers browse services, joi
 
 The current application uses Firebase Authentication, Cloud Firestore, Provider, and Firebase Cloud Messaging. Near-turn and called alerts appear inside the application. Android background push delivery was verified using a local trusted Node.js sender while the Firebase project remained on Spark. The sender must stay running and connected; Cloud Functions have not been deployed. See [Local notification setup and verification](docs/local_notifications.md).
 
-## Latest release verification — 28 November 2026
+## Current submission APK
+
+The current `Group07_QueueLess.apk` was built from application source
+`a11efd5`, after Dart formatting and removal of diagnostic debug logging.
+
+The updated release-mode APK was installed and launched successfully
+on the physical HONOR NTH NX9 (Android 13), restoring the saved account.
+A new ticket #1 in Phase 4 Release Test completed
+Join → Call Next → Served, with account switching on the same device.
+
+SHA-256:
+
+```text
+8BE72DDE46C22CF374EC2FDF376888D81AB81FB26930BFA7C7B8CB3839501F2E
+```
+
+See [release verification](docs/final_release_verification.md).
+The screenshots and detailed c94338e checks below are earlier evidence;
+their APK hash identifies the previous build.
+
+## Earlier release verification — c94338e — 28 November 2026
 
 Application source `c94338e` was verified from a clean checkout on the
 existing configured Windows machine:
